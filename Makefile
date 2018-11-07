@@ -18,6 +18,11 @@ up:
 	docker-compose up -d
 	@$(MAKE) --no-print-directory status
 
+up-build:
+	@echo ${BOLD}"\nSpinning up containers...\n" ${END_COLOR}
+	docker-compose up -d --build
+	@$(MAKE) --no-print-directory status
+
 stop:
 	@echo ${BOLD}"\nHalting containers..." ${END_COLOR}
 	@docker-compose stop
