@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * App\Models\Tag
@@ -20,12 +21,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $description
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Tag whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Tag whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Tag whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Tag whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Tag whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Tag whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Tag whereByUserId($value)
- * 
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Tag[]|Collection whereByNames($value)
+ *
  * @mixin \Eloquent
  */
 class Tag extends Model
@@ -33,7 +35,7 @@ class Tag extends Model
     /**
      * Table name
      */
-    const TABLE = 'tags';
+    public const TABLE = 'tags';
 
     /**
      * The attributes that are mass assignable.
@@ -44,11 +46,25 @@ class Tag extends Model
         'name', 'description',
     ];
 
+    /**
+     * The attributes that should be guarded for arrays.
+     *
+     * @var array
+     */
     protected $guarded = [
         'id',
         'created_at',
         'updated_at',
     ];
+
+    /**
+     * @param $names
+     * @return Tag[]|Collection
+     */
+    public function scopeWhereByNames($names): Collection
+    {
+        return $this->where('name', '=', $names)->get();
+    }
 
     /**
      * Get tags by user id

@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Compilations\Compilation;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Collection;
 
 /**
  * App\Models\User
@@ -25,17 +28,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\User onlyTrashed()
  * @method static bool|null restore()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User role($roles)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereEmailVerifiedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereInitials($value)value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereDeletedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\User withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\User withoutTrashed()
+ *
+ * @property Tag[]|Collection $tags
  *
  * @mixin \Eloquent
  */
@@ -46,7 +51,7 @@ class User extends Authenticatable
     /**
      * Table name
      */
-    const TABLE = 'users';
+    public const TABLE = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -79,23 +84,29 @@ class User extends Authenticatable
     ];
 
     /**
+     * @return HasMany
+     */
+    public function compilations(): HasMany
+    {
+        return $this->hasMany(Compilation::class);
+    }
+
+    /**
      * @return BelongsToMany
      */
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(Tag::class, 'user_tags', 'user_id', 'id');
+        return $this->belongsToMany(Tag::class, 'user_tag');
     }
 
     /**
-     * @param array $tags
+     * @param Collection $tags
      * @param bool $oldDelete
      */
-    public function syncTags(array $tags, bool $oldDelete = true): void
+    public function syncTags(Collection $tags, bool $oldDelete = true): void
     {
         if ($oldDelete) {
-            \DB::table('user_tags')
-                ->where('user_id')
-                ->delete();
+            $this->tags()->detach();
         }
 
         $this->tags()->attach($tags);

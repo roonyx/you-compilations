@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace Models\Compilations;
+namespace App\Models\Compilations;
 
 use App\Models\Tag;
 use Illuminate\Database\Eloquent\Model;
@@ -16,13 +16,39 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- * Class Video
- * @package Models\Compilations
+ * App\Models\Compilations\Video
+ *
+ * @property string $id
+ * @property string $title
+ * @property string $description
+ *
+ *
+ * The array has the keys:
+ *
+ *  - medium     (320x180)
+ *  - high       (480x360)
+ *  - standard   (640x480)
+ *  - maxres     (1280720)
+ *
+ * @property array $thumbnails
+ * @property int $compilation_id
+ * @property int $content_id Video - ID on YouTube
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Compilations\Video whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Compilations\Video whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Compilations\Video whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */
 class Video extends Model
 {
+    /**
+     * Table name
+     */
+    public const TABLE = 'videos';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -30,6 +56,13 @@ class Video extends Model
      */
     protected $fillable = [
         'compilation_id', 'content_id',
+        'title', 'description',
+    ];
+    /**
+     * @var array
+     */
+    protected $casts = [
+        'thumbnails' => 'array',
     ];
 
     /**

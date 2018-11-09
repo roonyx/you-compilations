@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Services\Compilations\CompilationService;
+use App\Repositories\Users\UserRepository;
 
 /**
  * Class CompilationJob
@@ -23,36 +25,52 @@ class CompilationJob implements ShouldQueue
      * @var int
      */
     public $userId;
-    /**
-     * @var array
-     */
-    public $tags = [];
 
+    /**
+     * @var UserRepository
+     */
+    protected $userRepository;
     /**
      * @var CompilationService
      */
-    protected $service;
+    protected $compilationService;
 
     /**
      * CompilationJob constructor.
      * @param int $userId
-     * @param array $tags
      */
-    public function __construct(int $userId, array $tags)
+    public function __construct(int $userId)
     {
         $this->userId = $userId;
-        $this->tags = $tags;
     }
 
     /**
      * Execute the job.
      *
      * @return void
+     * @throws \Exception
      */
     public function handle()
     {
-        $this->service = app(CompilationService::class);
+        $this->userRepository = app(UserRepository::class);
+        $this->compilationService = app(CompilationService::class);
 
-        $this->service->compilation($this->userId, $this->tags);
+        if ($user = $this->userRepository->get($this->userId)) {
+            $tagsNamed = $user
+                ->tags
+                ->pluck('name')
+                ->toArray();
+            $this
+                ->compilationService
+                ->compilation($this->userId, $tagsNamed);
+
+            // Start to generate an compilation videos
+            // on the next day 15:00 hours
+            self::dispatch($this->userId)->delay(
+                Carbon::now()
+                    ->addDay(1)
+                    ->setTime(15, 0)
+            );
+        }
     }
 }

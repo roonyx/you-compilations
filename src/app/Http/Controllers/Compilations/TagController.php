@@ -11,11 +11,11 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Compilations;
 
 use App\Models\Tag;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Repositories\Users\TagRepository;
-use Services\Tags\TagService;
+use App\Services\Tags\TagService;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\TagResource;
+use App\Http\Middleware\CompilationBuilder;
 use App\Http\Requests\Compilations\Tags\TagRequest;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -32,24 +32,36 @@ class TagController extends Controller
 
     /**
      * TagController constructor.
+     *
      * @param TagService $service
      */
     public function __construct(TagService $service)
     {
         $this->service = $service;
+
+        // Setup first compilation in queue
+        $this->middleware([
+            CompilationBuilder::class,
+        ]);
     }
 
     /**
      * @param Request $request
+     * @param string $name
+     * @return array|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index(Request $request)
+    public function index(Request $request, ?string $name = '')
     {
-        /** @var User $user */
-        $user = \Auth::getUser();
-        /** @var Tag[] $tags */
-        $tags  = $user->tags();
+        if (!empty($name)) {
+            $tags = Tag::query()
+                ->where('name', 'LIKE', "{$name}%")
+                ->limit(15)
+                ->get();
 
+            return TagResource::collection($tags);
+        }
 
+        return [];
     }
 
     /**
@@ -60,44 +72,9 @@ class TagController extends Controller
     public function store(TagRequest $request)
     {
         if ($this->service->store($request)) {
-            return [
-                'success' => true,
-            ];
+            return redirect('compilations');
         }
 
         throw new BadRequestHttpException('Error when store tags.');
-    }
-
-    /**
-     * @param TagRequest $request
-     * @return array
-     * @throws \Exception
-     */
-    public function edit(TagRequest $request)
-    {
-        if ($this->service->store($request)) {
-            return [
-                'success' => true,
-            ];
-        }
-
-        throw new BadRequestHttpException('Error when edit tag.');
-    }
-
-    /**
-     * @param Request $request
-     * @return array
-     */
-    public function destroy(Request $request, $id)
-    {
-        /** @var TagRepository $repository */
-        $repository = app(TagRepository::class);
-        if ($repository->delete($id)) {
-            return [
-                'success' => true,
-            ];
-        }
-
-        throw new BadRequestHttpException('Error when delete tag.');
     }
 }

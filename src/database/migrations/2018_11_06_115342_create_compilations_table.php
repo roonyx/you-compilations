@@ -35,6 +35,10 @@ class CreateCompilationsTable extends Migration
         Schema::create('videos', function (Blueprint $table) {
             $table->increments('id');
 
+            $table->string('title', 300);
+            $table->text('description');
+            $table->json('thumbnails');
+
             $table->unsignedInteger('compilation_id');
             $table
                 ->foreign('compilation_id')

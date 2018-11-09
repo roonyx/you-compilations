@@ -8,10 +8,14 @@
 
 declare(strict_types=1);
 
-namespace Http\Controllers\Compilations;
+namespace App\Http\Controllers\Compilations;
 
+use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Compilations\Compilation;
+use App\Http\Middleware\CompilationBuilder;
 
 /**
  * Class CompilationController
@@ -20,18 +24,54 @@ use App\Http\Controllers\Controller;
 class CompilationController extends Controller
 {
     /**
-     * @param Request $request
+     * Create a new controller instance.
      */
-    public function index(Request $request)
+    public function __construct()
     {
+        // Setup first compilation in queue
+        $this->middleware([
+            CompilationBuilder::class,
+        ]);
+    }
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function index()
+    {
+        /** @var User $user */
+        $user = \Auth::getUser();
+        /** @var Tag[] $tags */
+        $tags = $user->tags;
+
+        $compilations = $user->compilations()
+            ->with('videos')
+            ->paginate(5);
+
+        return view('compilations', [
+            'tags' => $tags,
+            'compilations' => $compilations,
+        ]);
     }
 
     /**
      * @param Request $request
+     * @param Compilation $compilation
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function show(Request $request)
+    public function show(Request $request, Compilation $compilation)
     {
+        /** @var User $user */
+        $user = \Auth::getUser();
+        /** @var Tag[] $tags */
+        $tags = $user->tags();
 
+        $videos = $compilation->videos;
+
+        return view('compilation', [
+            'tags' => $tags,
+            'compilation' => $compilation,
+            'videos' => $videos
+        ]);
     }
 }

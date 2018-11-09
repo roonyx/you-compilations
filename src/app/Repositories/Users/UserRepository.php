@@ -8,15 +8,15 @@
 
 declare(strict_types=1);
 
-namespace Repositories\Users;
+namespace App\Repositories\Users;
 
 use Carbon\Carbon;
 use App\Models\User;
-use Repositories\RepositoryInterface;
+use App\Repositories\RepositoryInterface;
 
 /**
  * Class UserRepository
- * @package Repositories\Users
+ * @package App\Repositories\Users
  */
 class UserRepository implements RepositoryInterface
 {

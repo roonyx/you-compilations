@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace Models\Compilations;
+namespace App\Models\Compilations;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -16,13 +16,28 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * Class Compilation
- * @package Models\Compilations
+ * App\Models\Compilations\Compilation
+ *
+ * @property string $id
+ * @property int $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Compilations\Compilation whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Compilations\Compilation whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Compilations\Compilation whereUpdatedAt($value)
+ *
+ * @property Video[] $videos
  *
  * @mixin \Eloquent
  */
 class Compilation extends Model
 {
+    /**
+     * Table name
+     */
+    public const TABLE = 'compilations';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -42,7 +57,6 @@ class Compilation extends Model
         'created_at',
         'updated_at',
     ];
-
 
     /**
      * @return BelongsTo

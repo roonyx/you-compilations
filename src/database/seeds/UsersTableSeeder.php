@@ -9,7 +9,7 @@
 declare(strict_types=1);
 
 use Illuminate\Database\Seeder;
-use Repositories\Users\UserRepository;
+use App\Repositories\Users\UserRepository;
 
 /**
  * Class UsersTableSeeder
@@ -23,13 +23,13 @@ class UsersTableSeeder extends Seeder
         [
             'name' => 'Vladimir Pogarsky',
             'email' => 'pogarsky.vladimir@roonyx.team',
-            'email_verified_at' => true,
+            'email_verified_at' => '2018-11-07 05:11:37',
             'password' => '12345',
         ],
         [
             'name' => 'Alexey Chubukov',
             'email' => 'chubukov.alexey@roonyx.team',
-            'email_verified_at' => true,
+            'email_verified_at' => '2018-11-07 05:11:37',
             'password' => '12345',
         ],
     ];
@@ -44,9 +44,11 @@ class UsersTableSeeder extends Seeder
     public function run(UserRepository $repository): void
     {
         foreach (self::DATA as $datum) {
-            if (!isset($datum['password']) || '' === $datum['password']) {
-                $datum['password'] = str_random();
-            }
+            $this->command->info("Created or updated \"{$datum['email']}\" with \"{$datum['password']}\" password");
+
+            $datum['password'] = empty($datum['password'])
+                ? str_random()
+                : Hash::make($datum['password']);
 
             try {
                 $user = $repository->findByEmail($datum['email']);
@@ -59,7 +61,6 @@ class UsersTableSeeder extends Seeder
                 $this->command->info("Updated user with \"{$datum['email']}\" email");
             } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                 $repository->create($datum);
-                $this->command->info("Created \"{$datum['email']}\" with \"{$datum['password']}\" password");
             }
         }
     }

@@ -8,12 +8,13 @@
 
 declare(strict_types=1);
 
-namespace Services\Tags;
+namespace App\Services\Tags;
 
 use App\Models\Tag;
 use App\Models\User;
-use Repositories\Users\TagRepository;
+use App\Repositories\Compilations\TagRepository;
 use App\Http\Requests\Compilations\Tags\TagRequest;
+use Illuminate\Support\Collection;
 
 /**
  * Class TagService
@@ -24,7 +25,7 @@ class TagService
     /**
      * @var TagRepository
      */
-    protected $repository;
+    public $repository;
 
     /**
      * TagService constructor.
@@ -36,28 +37,26 @@ class TagService
     }
 
     /**
-     * Store tag from request
+     * Store tags from request
      *
      * @param TagRequest $request
-     * @return Tag[]|array
+     * @return array|Collection
      * @throws \Exception
      */
-    public function store(TagRequest $request): array
+    public function store(TagRequest $request)
     {
-        if (!$request->has('names')) {
+        if (!$request->has('tags')) {
             return [];
         }
 
-        /** @var string[] $names */
-        $names = $request->get('names');
-        /** @var User $user */
-        if ($user = \Auth::getUser()) {
+        /** @var int[] $ids */
+        $ids = $request->get('tags');
 
-            /** @var Tag[] $tags */
-            if ($tags = $this->getTagsByNames($names)) {
+        /** @var User $user */
+        if ($user = \Auth::user()) {
+            if ($tags = $this->getTags($ids)) {
                 $user->syncTags($tags);
             }
-
             return $tags;
         }
 
@@ -65,13 +64,19 @@ class TagService
     }
 
     /**
-     * @param array $names
+     * @param array $ids
+     * @return Collection
      * @throws \Exception
-     * @return int[]|array
      */
-    protected function getTagsByNames(array $names): array
+    protected function getTags(array $ids): Collection
     {
-        $tags = [];
+        $idsTags = array_filter($ids, function ($value) {
+            return filter_var($value, FILTER_VALIDATE_INT);
+        });
+
+        $names = array_diff($ids, $idsTags);
+        /** @var Tag[]|Collection $tags */
+        $tags = Tag::findMany($idsTags);
 
         foreach ($names as $name) {
             /** @var Tag $tag */
@@ -81,7 +86,7 @@ class TagService
                 $tag = $this->repository->create(['name' => $name]);
             }
 
-            $tags[] = $tag->getKey();
+            $tags->push($tag);
         }
 
         return $tags;

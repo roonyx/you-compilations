@@ -27,7 +27,7 @@ class CreateTagsTable extends Migration
             $table->timestamps();
         });
 
-        Schema::create('user_tags', function (Blueprint $table) {
+        Schema::create('user_tag', function (Blueprint $table) {
             $table->unsignedInteger('tag_id');
             $table->unsignedInteger('user_id');
 
@@ -54,7 +54,7 @@ class CreateTagsTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_tags');
+        Schema::dropIfExists('user_tag');
         Schema::dropIfExists('tags');
     }
 }

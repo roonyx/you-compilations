@@ -30,8 +30,7 @@ class TagRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'names' => ['array'],
-            'names.*' => ['string']
+            'tags' => ['array'],
         ];
     }
 }

@@ -2,20 +2,20 @@
 /**
  * File: TagRepository.php
  * Author: Vladimir Pogarsky <pogarsky.vladimir@roonyx.team>
- * Date: 2018-11-06
+ * Date: 2018-11-07
  * Copyright (c) 2018
  */
 
 declare(strict_types=1);
 
-namespace Repositories\Users;
+namespace App\Repositories\Compilations;
 
 use App\Models\Tag;
-use Repositories\RepositoryInterface;
+use App\Repositories\RepositoryInterface;
 
 /**
  * Class TagRepository
- * @package Repositories\Users
+ * @package App\Repositories\Compilations
  */
 class TagRepository implements RepositoryInterface
 {
@@ -26,9 +26,10 @@ class TagRepository implements RepositoryInterface
      */
     public function create(array $attributes): Tag
     {
-        $user = Tag::create($attributes);
-        return $user;
+        $tag = Tag::create($attributes);
+        return $tag;
     }
+
 
     /**
      * @param Tag $tag

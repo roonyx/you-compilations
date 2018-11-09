@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use Repositories\Users\TagRepository;
-use Repositories\Users\UserRepository;
 use Illuminate\Support\ServiceProvider;
+use App\Repositories\Users\UserRepository;
+use App\Repositories\Compilations\TagRepository;
+use App\Repositories\Compilations\CompilationRepository;
 
 /**
  * Class AppServiceProvider
@@ -41,6 +42,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(TagRepository::class, function () {
             return new TagRepository();
+        });
+
+        $this->app->singleton(CompilationRepository::class, function () {
+            return new CompilationRepository();
         });
     }
 }
