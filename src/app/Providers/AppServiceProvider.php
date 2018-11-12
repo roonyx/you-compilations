@@ -8,6 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use App\Repositories\Users\UserRepository;
 use App\Repositories\Compilations\TagRepository;
 use App\Repositories\Compilations\CompilationRepository;
+use Repositories\Compilations\CompilationLogRepository;
 
 /**
  * Class AppServiceProvider
@@ -46,6 +47,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(CompilationRepository::class, function () {
             return new CompilationRepository();
+        });
+
+        $this->app->singleton(CompilationLogRepository::class, function () {
+            return new CompilationLogRepository();
         });
     }
 }

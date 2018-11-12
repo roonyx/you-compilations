@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Models\Compilations;
 
-use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $user_id
  * @property string $status
+ * @property string $description
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Compilations\CompilationLog whereId($value)
@@ -42,6 +42,10 @@ class CompilationLog extends Model
      * Queue result success
      */
     public const SUCCESS = 'success';
+    /**
+     * Queue result failed
+     */
+    public const FAILED = 'failed';
     /**
      * Waiting in queue
      */
@@ -80,7 +84,15 @@ class CompilationLog extends Model
      */
     public function isSuccessfully(): bool
     {
-        return $this->status == static::SUCCESS;
+        return $this->status === static::SUCCESS;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFailed(): bool
+    {
+        return $this->status === static::FAILED;
     }
 
     /**
@@ -88,54 +100,6 @@ class CompilationLog extends Model
      */
     public function isWaiting(): bool
     {
-        return $this->status == static::WAITING;
-    }
-
-    /**
-     * @param User $user
-     * @param Carbon $date
-     * @return bool
-     */
-    public static function isStandingInQueue(User $user, Carbon $date): bool
-    {
-        $compilationLog = static::findByDate($user, $date);
-
-        if ($compilationLog) {
-            return $compilationLog->isWaiting();
-        }
-
-        return false;
-    }
-
-    /**
-     * @param User $user
-     * @param Carbon $date
-     * @return bool
-     */
-    public static function isComplete(User $user, Carbon $date): bool
-    {
-        $compilationLog = static::findByDate($user, $date);
-
-        if ($compilationLog) {
-            return $compilationLog->isSuccessfully();
-        }
-
-        return false;
-    }
-
-    /**
-     * @param User $user
-     * @param Carbon $date
-     * @return CompilationLog
-     */
-    public static function findByDate(User $user, Carbon $date): CompilationLog
-    {
-        return self::query()
-            ->where('user_id', '=', $user->getKey())
-            ->whereBetween('created_at', [
-                $date->setTime(0, 0),
-                $date->setTime(23, 59, 59)
-            ])
-            ->first();
+        return $this->status === static::WAITING;
     }
 }

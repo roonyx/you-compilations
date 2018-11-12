@@ -44,9 +44,6 @@
                 }
             });
         });
-
-
-
     </script>
 
     <div class="section">

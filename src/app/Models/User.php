@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\Compilations\Compilation;
+use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Compilations\Compilation;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Collection;
+use App\Repositories\Compilations\CompilationLogRepository;
 
 /**
  * App\Models\User
@@ -110,5 +112,14 @@ class User extends Authenticatable
         }
 
         $this->tags()->attach($tags);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCompilationInProcess(): bool
+    {
+        $repository = app(CompilationLogRepository::class);
+        return $repository->isStandingInQueue($this, Carbon::now());
     }
 }

@@ -30,6 +30,7 @@ class CreateCompilationLogsTable extends Migration
                 ->onUpdate('CASCADE');
 
             $table->string('status');
+            $table->text('description')->nullable();
 
             $table->timestamps();
         });

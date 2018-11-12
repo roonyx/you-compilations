@@ -6,6 +6,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Carbon\Carbon;
+use App\Models\User;
 use App\Jobs\CompilationJob;
 
 /**
@@ -23,14 +24,27 @@ class CompilationBuilder
      */
     public function handle($request, Closure $next)
     {
-        if ($user = \Auth::user()) {
-            if (!$user->compilations()->exists() && $user->tags()->exists()) {
-                $tags = $user->tags->pluck('name')->toArray();
-                CompilationJob::dispatch($user->getKey(), $tags)->delay(
-                    Carbon::now()->addMinute(1)
-                );
-            }
+        /** @var User $user */
+        $user = \Auth::user();
+
+        if ($user
+            && $this->isNeedCompilation($user)
+            && !$user->isCompilationInProcess()) {
+            $tags = $user->tags->pluck('name')->toArray();
+            CompilationJob::dispatch($user->getKey(), $tags)->delay(
+                Carbon::now()
+            );
         }
+
         return $next($request);
+    }
+
+    /**
+     * @param User $user
+     * @return bool
+     */
+    protected function isNeedCompilation(User $user)
+    {
+        return !$user->compilations()->exists() && $user->tags()->exists();
     }
 }

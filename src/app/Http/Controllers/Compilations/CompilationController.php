@@ -12,6 +12,7 @@ namespace App\Http\Controllers\Compilations;
 
 use App\Models\Tag;
 use App\Models\User;
+use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Compilations\Compilation;
@@ -35,9 +36,9 @@ class CompilationController extends Controller
     }
 
     /**
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return \Illuminate\Contracts\View\Factory|View
      */
-    public function index()
+    public function index(): View
     {
         /** @var User $user */
         $user = \Auth::getUser();
@@ -57,9 +58,9 @@ class CompilationController extends Controller
     /**
      * @param Request $request
      * @param Compilation $compilation
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return \Illuminate\Contracts\View\Factory|View
      */
-    public function show(Request $request, Compilation $compilation)
+    public function show(Request $request, Compilation $compilation): View
     {
         /** @var User $user */
         $user = \Auth::getUser();

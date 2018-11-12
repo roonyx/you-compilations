@@ -97,8 +97,6 @@ class CompilationService
             'user_id' => $user->getKey(),
         ]);
 
-        echo 'Created compilations...' . PHP_EOL;
-
         $this->videoRepository->storeContents($compilation->getKey(), $contents);
         echo Carbon::now()->toDateTimeString() . PHP_EOL;
 
@@ -133,7 +131,7 @@ class CompilationService
      * @return Content[]|array
      * @throws \Exception
      */
-    protected function loadContentsInformation($videos)
+    protected function loadContentsInformation(&$videos)
     {
         /** @var Content[] $contents */
         $contents = [];
