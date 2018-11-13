@@ -7,6 +7,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/settings', 'UserController@index')->name('settings');
     Route::get('/compilations', 'Compilations\CompilationController@index')->name('compilations');
     Route::get('/compilations/{compilation}', 'Compilations\CompilationController@show')->name('compilation');
 
