@@ -47,7 +47,8 @@ class CompilationController extends Controller
 
         $compilations = $user->compilations()
             ->with('videos')
-            ->paginate(5);
+            ->latest()
+            ->paginate(6);
 
         return view('compilations', [
             'tags' => $tags,
