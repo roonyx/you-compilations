@@ -3,94 +3,86 @@
 /** @var \App\Models\Compilations\Compilation[] $compilations */
 /** @var \App\Models\Tag[] $tags */
 
+/** @var \App\Models\User $user */
+$user = \Auth::user();
+
 ?>
 
 @extends('layouts.app')
 
 @section('content')
-    <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet"/>
-    <script src="{{ asset('js/select2.full.min.js') }}"></script>
 
-    <script>
-        $(document).ready(function () {
-            $('.tags-multiple-select').select2({
-                placeholder: "Choose tags...",
-                tags: true,
-                tokenSeparators: [','],
-                ajax: {
-                    url: function (params) {
-                        return '{{ route('api_tags_search') }}' + '/' + (params.term ? params.term : '');
-                    },
-                    dataType: 'json',
-                    type: "GET",
-                    quietMillis: 50,
-                    data: function (term) {
-                        return {
-                            term: term.term
-                        };
-                    },
-                    processResults: function (data) {
-                        var myResults = [];
-                        $.each(data, function (index, item) {
-                            myResults.push({
-                                'id': item[0].id,
-                                'text': item[0].text
-                            });
-                        });
-                        return {
-                            results: myResults
-                        };
-                    }
-                }
-            });
-        });
-    </script>
+    <style>
+        .overlay {
+            display: none;
+            position: absolute;
+            padding: 5px;
+            width: 100%;
+            height: 30%;
+            top: 100%;
+            left: 0;
+            background-color: rgb(255, 255, 255);
+            color: black;
+            text-align: center;
+            transition: all 200ms ease-in;
+        }
 
-    <div class="section">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-8">
+        .card:hover .overlay {
+            display: block;
+            top: 70%;
+        }
+    </style>
 
-                    <div class="card">
-                        <div class="card-header">Enter your tags:</div>
-                        <div class="card-body">
-                            <form action="{{ route('tags_store') }}" method="post" name="create_tags">
-                                @csrf
-                                <select class="tags-multiple-select" style="width: 80%" name="tags[]" multiple="multiple">
-                                    @foreach ($tags as $tag)
-                                        <option value="{{ $tag->id }}" selected>{{ $tag->name }}</option>
-                                    @endforeach
-                                </select>
-                                <input type="submit" class="btn btn-primary btn-sm" value="Save">
-                            </form>
+    @include('scroll')
+
+    <div class="container">
+        <div class="title">
+            <h2>Compilations</h2>
+        </div>
+        <div class="col-md-10 ml-auto mr-auto">
+            @if($compilations->isEmpty())
+                <div class="alert alert-info">
+                    <div class="container">
+                        <div class="alert-icon">
+                            <i class="material-icons">info_outline</i>
                         </div>
-                    </div>
-
-                    <div class="section">
-                        @foreach($compilations as $compilation)
-
-                            <div class="card">
-                                <div class="card-header">
-                                    <a href="{{ route('compilation', ['compilation' => $compilation]) }}">{{$compilation->created_at->toDateTimeString()}}</a>
-                                </div>
-                                <div class="card-body">
-                                    @foreach($compilation->videos as $video)
-                                        <div class="video">
-                                            <a href="https://www.youtube.com/embed/{{$video->content_id}}">{{$video->title}}</a>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-
-                        @endforeach
-
-                        <center>
-                            {{ $compilations->links() }}
-                        </center>
+                        @if($user->isCompilationInProcess())
+                            <b>Info alert:</b> Your first compilation is already creating!
+                        @else
+                            <b>Info alert:</b> In the user settings, specify the tags you are interested in.
+                        @endif
                     </div>
                 </div>
-            </div>
+            @else
+                <div class="card-columns">
+                    @foreach($compilations as $compilation)
+                        <a href="{{ route('compilation', ['compilation' => $compilation]) . '/#scroll' }}">
+                            <div class="card">
+                                <img class="card-img-top"
+                                     src="{{ $compilation->videos[0]->thumbnails[\App\Entity\Enums\VideoSize::MEDIUM]['url'] }}"
+                                     alt="Card image cap">
+
+                                <div class="overlay">
+                                    Date: {{ $compilation->created_at->toDateString() }}
+                                </div>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+                <div class="row justify-content-center">
+                    <div class="pagination-info">
+                        {{ $compilations->links() }}
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
+
+    <script>
+        if ((new URL(window.location.href)).searchParams.get("page")) {
+            window.location.hash = '#scroll';
+            $.scrollTop($('#scroll').offsetTop);
+        }
+    </script>
 
 @endsection

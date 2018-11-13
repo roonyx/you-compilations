@@ -10,31 +10,28 @@ $videos = $compilation->videos;
 
 @section('content')
 
-    <div class="section">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    @foreach($compilation->videos as $video)
+    @include('scroll')
 
-                        <div class="card">
-                            <div class="card-header">{{$video->title}}</div>
-                            <div class="card-body">
-                                <img src="{{ $video->thumbnails[App\Entity\Enums\VideoSize::STANDARD]['url'] }}" width="400" alt="">
-                                {{--<iframe width="560" height="315"--}}
-                                        {{--src="https://www.youtube.com/embed/{{$video->content_id}}" frameborder="0"--}}
-                                        {{--allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"--}}
-                                        {{--allowfullscreen>--}}
-                                {{--</iframe>--}}
-                            </div>
-                            <div class="card-description">
-                                <div class="content">
-                                    <span>{{!! nl2br($video->description) !!}}</span>
-                                </div>
-                            </div>
+    <div class="container">
+        <div class="title">
+            <h2>Compilation videos. Date: {{ $compilation->created_at->toDateString() }}</h2>
+        </div>
+
+        <div class="col-md-10 ml-auto mr-auto">
+            <div class="card-columns">
+                @foreach($compilation->videos as $video)
+                    <div class="card">
+                        <a href="https://www.youtube.com/watch?v={{ $video->content_id }}" target="_blank">
+                            <img class="card-img-top"
+                                 src="{{ $video->thumbnails[App\Entity\Enums\VideoSize::MEDIUM]['url'] }}"
+                                 alt="Card image cap">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $video->title }}</h5>
+                            <p class="card-text">{!! (parseUrlInText(str_limit(htmlspecialchars($video->description), 200))) !!}</p>
                         </div>
-
-                    @endforeach
-                </div>
+                    </div>
+                @endforeach
             </div>
         </div>
     </div>
