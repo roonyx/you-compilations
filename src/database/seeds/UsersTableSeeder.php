@@ -22,7 +22,7 @@ class UsersTableSeeder extends Seeder
     protected const DATA = [
         [
             'name' => 'Vladimir Pogarsky',
-            'email' => 'pogarsky.vladimir@roonyx.team',
+            'email' => 'vladimir.pogarsky@roonyx.team',
             'email_verified_at' => '2018-11-07 05:11:37',
             'password' => '12345',
         ],

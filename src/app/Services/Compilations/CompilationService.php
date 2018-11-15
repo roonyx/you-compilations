@@ -10,9 +10,11 @@ declare(strict_types=1);
 
 namespace App\Services\Compilations;
 
+use Mail;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Entity\Content;
+use App\Mail\CompilationBuilt;
 use App\Entity\ContentStatistic;
 use App\Models\Compilations\Compilation;
 use App\Repositories\Users\UserRepository;
@@ -97,7 +99,11 @@ class CompilationService
             'user_id' => $user->getKey(),
         ]);
 
+        // Storing contents in database
         $this->videoRepository->storeContents($compilation->getKey(), $contents);
+        // Sending reminder about new compilation
+        $this->sendEmail($user, $compilation);
+
         echo Carbon::now()->toDateTimeString() . PHP_EOL;
 
         return true;
@@ -282,5 +288,20 @@ class CompilationService
         }
 
         return $result;
+    }
+
+    /**
+     * @param User $user
+     * @param Compilation $compilation
+     */
+    protected function sendEmail(User $user, Compilation $compilation): void
+    {
+        try {
+            echo 'Email is sending on currently email: ' . $user->email . PHP_EOL;
+            Mail::to($user)->send(new CompilationBuilt($compilation));
+            echo 'Email is sent...' . PHP_EOL;
+        } catch (\Exception $exception) {
+            echo $exception->getMessage() . PHP_EOL;
+        }
     }
 }
