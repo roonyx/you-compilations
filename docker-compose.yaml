@@ -4,10 +4,14 @@ services:
 
   server:
     build:
-      context: ./
+      context: .
       dockerfile: ./docker/app.fpm.dockerfile
+    env_file:
+      - ./docker/compose-env/.env
     volumes:
       - ./src/:/var/www/app
+    depends_on:
+      - db
 
   nginx:
     build:
@@ -27,11 +31,20 @@ services:
       - "33061:3306"
     volumes:
       - ./.database:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: 123
-      MYSQL_DATABASE: you-compilations
-      MYSQL_USER: you-compilatipns
-      MYSQL_PASSWORD: 12345
+    env_file:
+      - ./docker/compose-env/.db
+
+  queue:
+    build:
+      context: .
+      dockerfile: ./docker/app.queue.dockerfile
+    restart: on-failure
+    volumes:
+      - ./src/:/var/www/app
+    env_file:
+      - ./docker/compose-env/.env
+    depends_on:
+      - server
 
 networks:
   default:
