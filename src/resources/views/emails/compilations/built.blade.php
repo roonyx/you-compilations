@@ -6,12 +6,12 @@ $videos = $compilation->videos;
 ?>
 
 <a href="{{ @route('compilation', ['compilation' => $compilation]) }}">
-Your compilation is collected! Date: {{ $compilation->created_at->toDateString() }}
+Your compilation is built! Date: {{ $compilation->created_at->toDateString() }}
 </a>
 
 <ul>
     @foreach($videos as $video)
-        <li><span>{{ $video->title }}</span></li>;
+        <li><span>{{ preg_replace('/[^a-zA-Z0-9_ -]/s','', $video->title) }};</span></li>
     @endforeach
 </ul>
 

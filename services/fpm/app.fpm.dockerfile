@@ -1,7 +1,6 @@
 FROM php:7.2-fpm
 LABEL maintainer="vladimir.pogarsky@roonyx.team"
 
-
 # set-up php config
 COPY /docker/php/php.ini /usr/local/etc/php/
 

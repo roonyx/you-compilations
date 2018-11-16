@@ -32,6 +32,12 @@ class UsersTableSeeder extends Seeder
             'email_verified_at' => '2018-11-07 05:11:37',
             'password' => '12345',
         ],
+        [
+            'name' => 'test',
+            'email' => 'test@gmail.com',
+            'email_verified_at' => '2018-11-07 05:11:37',
+            'password' => 'test',
+        ],
     ];
 
     /**

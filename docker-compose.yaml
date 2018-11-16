@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.2'
 
 services:
 
@@ -6,10 +6,10 @@ services:
     build:
       context: .
       dockerfile: ./docker/app.fpm.dockerfile
-    env_file:
-      - ./docker/compose-env/.env
     volumes:
       - ./src/:/var/www/app
+    env_file:
+      - ./docker/compose-env/.env
     depends_on:
       - db
 
@@ -25,14 +25,14 @@ services:
       - server
 
   db:
-    image: mariadb:10.3
+    image: mariadb:10.2.19
     restart: on-failure
     ports:
       - "33061:3306"
     volumes:
-      - ./.database:/var/lib/mysql
+      - database:/var/lib/mysql
     env_file:
-      - ./docker/compose-env/.db
+      - ./docker/compose-env/db.env
 
   queue:
     build:
@@ -49,3 +49,6 @@ services:
 networks:
   default:
     name: you-compilations
+
+volumes:
+  database:

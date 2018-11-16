@@ -14,9 +14,10 @@ use App\Models\Tag;
 use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Models\Compilations\Compilation;
+use Illuminate\Contracts\View\Factory;
 use App\Http\Middleware\CompilationBuilder;
+use App\Models\Compilations\Compilation;
+use App\Http\Controllers\Controller;
 
 /**
  * Class CompilationController
@@ -29,14 +30,16 @@ class CompilationController extends Controller
      */
     public function __construct()
     {
-        // Setup first compilation in queue
-        $this->middleware([
-            CompilationBuilder::class,
-        ]);
+        if (\Auth::check()) {
+            // Setup first compilation in queue
+            $this->middleware([
+                CompilationBuilder::class,
+            ]);
+        }
     }
 
     /**
-     * @return \Illuminate\Contracts\View\Factory|View
+     * @return Factory|View
      */
     public function index(): View
     {
@@ -59,7 +62,7 @@ class CompilationController extends Controller
     /**
      * @param Request $request
      * @param Compilation $compilation
-     * @return \Illuminate\Contracts\View\Factory|View
+     * @return Factory|View
      */
     public function show(Request $request, Compilation $compilation): View
     {

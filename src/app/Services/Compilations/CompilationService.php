@@ -30,7 +30,11 @@ class CompilationService
     /**
      * The amount of video to compilation
      */
-    const COMPILATION_VIDEO_AMOUNT = 10;
+    const COMPILATION_VIDEO_AMOUNT = 15;
+    /**
+     * The amount of video parse in one request on YouTube API
+     */
+    const VIDEO_PARSE_IN_ONE_REQUEST = 30;
 
     /**
      * @var UserRepository
@@ -242,7 +246,7 @@ class CompilationService
      * @return array API results
      * @throws \Exception
      */
-    protected function searchVideos($q, $publishedBefore = null, $maxResults = 30, $order = null, $part = ['id'])
+    protected function searchVideos($q, $publishedBefore = null, $maxResults = self::VIDEO_PARSE_IN_ONE_REQUEST, $order = null, $part = ['id'])
     {
         $params = [
             'q' => $q,
