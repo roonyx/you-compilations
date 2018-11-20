@@ -1,5 +1,8 @@
 #!/bin/sh
 
+echo "Database starting...";
+sleep 5s;
+
 # Clear the cache
 echo "Cache is cleaning...";
 php artisan cache:clear --no-interaction

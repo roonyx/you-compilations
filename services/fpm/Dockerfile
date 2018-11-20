@@ -2,7 +2,7 @@ FROM php:7.2-fpm
 LABEL maintainer="vladimir.pogarsky@roonyx.team"
 
 # set-up php config
-COPY /docker/php/php.ini /usr/local/etc/php/
+COPY /services/fpm/php/php.ini /usr/local/etc/php/
 
 # Installing dependencies
 RUN apt-get update && apt-get install -y \
@@ -16,9 +16,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Changing Workdir
 WORKDIR /var/www/app
 
-# Add entrypoint script
-COPY ./docker/entrypoint/app.fpm.entrypoint.sh /entry_point.sh
-
 # Give access control under app directory to www-data user
 RUN chown -R www-data:www-data .
 
@@ -30,6 +27,9 @@ RUN mkdir /var/www/.composer && chown www-data:www-data /var/www/.composer
 
 # Set app user
 USER www-data
+
+# Add entrypoint script
+COPY /services/fpm/entrypoint.sh /entry_point.sh
 
 # Create .env file for APP_KEY
 RUN touch -a .env
@@ -43,7 +43,9 @@ ARG DEV
 # Install dependencies
 RUN if [ $DEV -eq 1 ]; then sudo composer install; else composer install --no-dev --optimize-autoloader; fi
 
-RUN chmod 775 -R storage \
+RUN chmod 777 -R storage \
+    && chmod -R 775 bootstrap/cache \
+    && chown -R www-data:www-data storage \
     && chgrp -R www-data storage bootstrap/cache \
     && chmod -R ug+wrx storage bootstrap/cache
 

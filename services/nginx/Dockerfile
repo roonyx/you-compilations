@@ -1,7 +1,7 @@
 FROM nginx:alpine
 
-COPY /docker/fpm/default.conf /etc/nginx/conf.d/
-COPY /docker/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY /services/nginx/config/default.conf /etc/nginx/conf.d/
+COPY /services/nginx/config/nginx.conf /etc/nginx/nginx.conf
 
 # Create www-data user for nginx
 RUN addgroup -g 1000 -S www-data \

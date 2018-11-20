@@ -5,18 +5,18 @@ services:
   server:
     build:
       context: .
-      dockerfile: ./docker/app.fpm.dockerfile
+      dockerfile: ./services/fpm/Dockerfile
     volumes:
       - ./src/:/var/www/app
     env_file:
-      - ./docker/compose-env/.env
+      - ./services/fpm/environments/.env
     depends_on:
       - db
 
   nginx:
     build:
       context: .
-      dockerfile: ./docker/nginx.fpm.dockerfile
+      dockerfile: ./services/nginx/Dockerfile
     volumes:
       - ./src/:/var/www/app
     ports:
@@ -31,24 +31,26 @@ services:
       - "33061:3306"
     volumes:
       - database:/var/lib/mysql
-    env_file:
-      - ./docker/compose-env/db.env
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_DATABASE: you-compilations
+      MYSQL_USER: you-compilations
+      MYSQL_PASSWORD: 12345
 
   queue:
     build:
       context: .
-      dockerfile: ./docker/app.queue.dockerfile
+      dockerfile: ./services/queue/Dockerfile
     restart: on-failure
     volumes:
       - ./src/:/var/www/app
     env_file:
-      - ./docker/compose-env/.env
+      - ./services/fpm/environments/.env
     depends_on:
       - server
 
 networks:
   default:
-    name: you-compilations
 
 volumes:
   database:
