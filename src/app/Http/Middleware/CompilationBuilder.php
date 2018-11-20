@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
-use Closure;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Jobs\CompilationJob;
@@ -22,14 +21,14 @@ class CompilationBuilder
      * @param  \Closure $next
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle($request, \Closure $next)
     {
         /** @var User $user */
         $user = \Auth::user();
 
         if ($user
             && $this->isNeedCompilation($user)
-            && !$user->isCompilationInProcess()) {
+            && !$user->inQueueInProcess()) {
             $tags = $user->tags->pluck('name')->toArray();
             CompilationJob::dispatch($user->getKey(), $tags)->delay(
                 Carbon::now()

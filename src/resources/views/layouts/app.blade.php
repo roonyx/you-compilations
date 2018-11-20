@@ -92,7 +92,7 @@
         <div class="row">
             <div class="col-md-10 ml-auto mr-auto">
                 <div class="brand">
-                    <h1>YouCompilations.</h1>
+                    <h1>YouCompilations</h1>
                     <h3>Be in trend. All the freshest and most popular especially for you.</h3>
                 </div>
             </div>

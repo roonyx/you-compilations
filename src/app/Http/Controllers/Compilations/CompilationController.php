@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Compilations;
 
-use App\Models\Tag;
 use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
@@ -30,23 +29,20 @@ class CompilationController extends Controller
      */
     public function __construct()
     {
-        if (\Auth::check()) {
-            // Setup first compilation in queue
-            $this->middleware([
-                CompilationBuilder::class,
-            ]);
-        }
+        // Setup first compilation in queue
+        $this->middleware([
+            CompilationBuilder::class,
+        ]);
     }
 
     /**
      * @return Factory|View
+     * @throws \Illuminate\Auth\AuthenticationException
      */
     public function index(): View
     {
         /** @var User $user */
-        $user = \Auth::getUser();
-        /** @var Tag[] $tags */
-        $tags = $user->tags;
+        $user = \Auth::authenticate();
 
         $compilations = $user->compilations()
             ->with('videos')
@@ -54,7 +50,6 @@ class CompilationController extends Controller
             ->paginate(6);
 
         return view('compilations', [
-            'tags' => $tags,
             'compilations' => $compilations,
         ]);
     }
@@ -68,15 +63,10 @@ class CompilationController extends Controller
     {
         /** @var User $user */
         $user = \Auth::getUser();
-        /** @var Tag[] $tags */
-        $tags = $user->tags();
-
-        $videos = $compilation->videos;
 
         return view('compilation', [
-            'tags' => $tags,
             'compilation' => $compilation,
-            'videos' => $videos
+            'videos' => $compilation->videos,
         ]);
     }
 }

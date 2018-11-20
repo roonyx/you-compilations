@@ -117,6 +117,16 @@ class User extends Authenticatable
     /**
      * @return bool
      */
+    public function inQueueInProcess(): bool
+    {
+        $date = Carbon::now();
+        $repository = app(CompilationLogRepository::class);
+        return $repository->isStandingInQueue($this, $date) ?: $repository->isComplete($this, $date);
+    }
+
+    /**
+     * @return bool
+     */
     public function isCompilationInProcess(): bool
     {
         $repository = app(CompilationLogRepository::class);

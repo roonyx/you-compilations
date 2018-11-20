@@ -29,7 +29,7 @@ interface RepositoryInterface
      * @param $model Model|\Eloquent
      * @param array $attributes
      */
-    public function update(Model $model, array $attributes);
+    public function update($model, array $attributes);
 
     /**
      * @param int $id

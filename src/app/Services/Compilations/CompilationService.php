@@ -90,11 +90,11 @@ class CompilationService
         $uniqueContents = [];
 
         do {
-            $uniqueContents = array_merge($this->uniqueContentsForUser(
+            $uniqueContents = \array_merge($this->uniqueContentsForUser(
                 $user,
                 $this->loadVideoContents($tags)
             ), $uniqueContents);
-        } while (count($uniqueContents) < static::COMPILATION_VIDEO_AMOUNT);
+        } while (\count($uniqueContents) < static::COMPILATION_VIDEO_AMOUNT);
 
         $contents = $this->getPartitionContents($uniqueContents, static::COMPILATION_VIDEO_AMOUNT);
 
@@ -129,7 +129,7 @@ class CompilationService
             );
 
             if (isset($videos['results'])) {
-                $contents = array_merge($this->loadContentsInformation($videos['results']), $contents);
+                $contents = \array_merge($this->loadContentsInformation($videos['results']), $contents);
             }
         }
 
@@ -182,11 +182,11 @@ class CompilationService
 
         $videos = $this->videoRepository->getVideosAvailable(
             $user,
-            array_keys($contents)
+            \array_keys($contents)
         );
 
         foreach ($videos as $video) {
-            if (key_exists($video->content_id, $contents)) {
+            if (\key_exists($video->content_id, $contents)) {
                 unset($contents[$video->content_id]);
             }
         }
@@ -206,7 +206,7 @@ class CompilationService
             $prepareContents[$content->statistic->likes] = $content;
         }
 
-        ksort($prepareContents);
+        \ksort($prepareContents);
 
         return $prepareContents;
     }
@@ -218,7 +218,7 @@ class CompilationService
      */
     protected function getPartitionContents(array $contents, int $count = self::COMPILATION_VIDEO_AMOUNT): array
     {
-        return array_slice(
+        return \array_slice(
             $this->selectionContents($contents),
             0,
             $count
@@ -251,7 +251,7 @@ class CompilationService
         $params = [
             'q' => $q,
             'type' => 'video',
-            'part' => implode(', ', $part),
+            'part' => \implode(', ', $part),
             'maxResults' => $maxResults,
         ];
 

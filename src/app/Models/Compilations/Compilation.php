@@ -11,9 +11,11 @@ declare(strict_types=1);
 namespace App\Models\Compilations;
 
 use App\Models\User;
+use App\Entity\Enums\VideoSize;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * App\Models\Compilations\Compilation
@@ -72,5 +74,28 @@ class Compilation extends Model
     public function videos(): HasMany
     {
         return $this->hasMany(Video::class, 'compilation_id', 'id');
+    }
+
+    /**
+     * @param Compilation $compilation
+     * @return array
+     */
+    public static function prettyImage(Compilation $compilation): array
+    {
+        /** @var Video[]|Collection $videos */
+        $videos = $compilation->videos;
+
+        if (empty($videos)) {
+            return [];
+        }
+
+        $collections =  $videos->toArray();
+        $video = \array_shift($collections);
+
+        return $video['thumbnails'][VideoSize::HIGH]
+            ?? $video['thumbnails'][VideoSize::MAXRES]
+            ?? $video['thumbnails'][VideoSize::MEDIUM]
+            ?? $video['thumbnails'][VideoSize::STANDARD]
+            ?? [];
     }
 }

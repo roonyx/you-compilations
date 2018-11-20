@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Compilations\Compilation;
+
 /**
  * Class IndexController
  * @package App\Http\Controllers
@@ -27,6 +29,13 @@ class IndexController extends Controller
      */
     public function index()
     {
-        return view('index');
+        $compilations = Compilation::query()
+            ->latest()
+            ->limit(15)
+            ->get();
+
+        return view('index', [
+            'compilations' => $compilations,
+        ]);
     }
 }

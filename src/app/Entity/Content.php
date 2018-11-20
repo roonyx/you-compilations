@@ -90,8 +90,8 @@ class Content
      */
     protected static function validateFields(\stdClass $object): bool
     {
-        return property_exists($object, 'id')
-            && property_exists($object->id, 'videoId')
-            && property_exists($object, 'kind');
+        return \property_exists($object, 'id')
+            && \property_exists($object->id, 'videoId')
+            && \property_exists($object, 'kind');
     }
 }

@@ -53,14 +53,13 @@ class TagService
         $ids = $request->get('tags');
 
         /** @var User $user */
-        if ($user = \Auth::user()) {
-            if ($tags = $this->getTags($ids)) {
-                $user->syncTags($tags);
-            }
-            return $tags;
+        $user = \Auth::authenticate();
+
+        if ($tags = $this->getTags($ids)) {
+            $user->syncTags($tags);
         }
 
-        return [];
+        return $tags;
     }
 
     /**
@@ -70,11 +69,11 @@ class TagService
      */
     protected function getTags(array $ids): Collection
     {
-        $idsTags = array_filter($ids, function ($value) {
-            return filter_var($value, FILTER_VALIDATE_INT);
+        $idsTags = \array_filter($ids, function ($value) {
+            return \filter_var($value, \FILTER_VALIDATE_INT);
         });
 
-        $names = array_diff($ids, $idsTags);
+        $names = \array_diff($ids, $idsTags);
         /** @var Tag[]|Collection $tags */
         $tags = Tag::findMany($idsTags);
 
@@ -82,7 +81,7 @@ class TagService
             /** @var Tag $tag */
             $tag = $this->repository->getByName($name);
 
-            if (is_null($tag)) {
+            if (\is_null($tag)) {
                 $tag = $this->repository->create(['name' => $name]);
             }
 
