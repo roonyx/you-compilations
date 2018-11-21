@@ -9,10 +9,10 @@ use Illuminate\Support\Collection;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Compilations\Compilation;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use App\Repositories\Compilations\CompilationLogRepository;
 
 /**
  * App\Models\User
@@ -46,7 +46,7 @@ use App\Repositories\Compilations\CompilationLogRepository;
  *
  * @mixin \Eloquent
  */
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable, SoftDeletes;
 
@@ -117,19 +117,9 @@ class User extends Authenticatable
     /**
      * @return bool
      */
-    public function inQueueInProcess(): bool
-    {
-        $date = Carbon::now();
-        $repository = app(CompilationLogRepository::class);
-        return $repository->isStandingInQueue($this, $date) ?: $repository->isComplete($this, $date);
-    }
-
-    /**
-     * @return bool
-     */
     public function isCompilationInProcess(): bool
     {
         $repository = app(CompilationLogRepository::class);
-        return $repository->isStandingInQueue($this, Carbon::now());
+        return $repository;
     }
 }

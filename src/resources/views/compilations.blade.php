@@ -1,11 +1,10 @@
 <?php
-
-/** @var \App\Models\Compilations\Compilation[] $compilations */
+/** @var \App\Models\Compilations\Compilation[]|\Illuminate\Support\Collection $compilations */
 /** @var \App\Models\Tag[] $tags */
+/** @var bool $isStandingInQueue */
 
 /** @var \App\Models\User $user */
 $user = \Auth::user();
-
 ?>
 
 @extends('layouts.app')
@@ -37,7 +36,7 @@ $user = \Auth::user();
 
     <div class="container">
         <div class="title">
-            <h2>Compilations</h2>
+            <h2>Your compilations</h2>
         </div>
         <div class="col-md-10 ml-auto mr-auto">
             @if($compilations->isEmpty())
@@ -46,7 +45,7 @@ $user = \Auth::user();
                         <div class="alert-icon">
                             <i class="material-icons">info_outline</i>
                         </div>
-                        @if($user->isCompilationInProcess())
+                        @if($isStandingInQueue)
                             <b>Info alert:</b> Your first compilation is already creating!
                         @else
                             <b>Info alert:</b> In the user settings, specify the tags you are interested in.

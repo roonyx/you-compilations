@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\Compilations\Compilation;
+use Illuminate\Support\Collection;
 
 /**
  * Class IndexController
@@ -13,22 +14,13 @@ use App\Models\Compilations\Compilation;
 class IndexController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
-    /**
      * Show the application dashboard.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
+        /** @var Compilation[] $compilations */
         $compilations = Compilation::query()
             ->latest()
             ->limit(15)

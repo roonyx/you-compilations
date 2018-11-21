@@ -62,7 +62,7 @@
                                 <option value="{{ $tag->id }}" selected>{{ $tag->name }}</option>
                             @endforeach
                         </select>
-                        <input type="submit" class="btn btn-primary btn-sm" value="Save">
+                        <input type="submit" class="btn btn-danger btn-sm" value="Save">
                     </form>
                 </div>
             </div>

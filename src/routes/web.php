@@ -1,12 +1,12 @@
 <?php
 
-Route::get('/', 'IndexController@index');
+Route::get('/', 'IndexController@index')->name('index');
 
-Auth::routes();
+Auth::routes(['verify' => true]);
 
 Route::get('/compilations/{compilation}', 'Compilations\CompilationController@show')->name('compilation');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/settings', 'UserController@index')->name('settings');
     Route::get('/compilations', 'Compilations\CompilationController@index')->name('compilations');
 

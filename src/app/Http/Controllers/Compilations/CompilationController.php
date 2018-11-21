@@ -10,10 +10,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Compilations;
 
+use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Contracts\View\Factory;
+use App\Repositories\Compilations\CompilationLogRepository;
 use App\Http\Middleware\CompilationBuilder;
 use App\Models\Compilations\Compilation;
 use App\Http\Controllers\Controller;
@@ -25,10 +28,18 @@ use App\Http\Controllers\Controller;
 class CompilationController extends Controller
 {
     /**
-     * Create a new controller instance.
+     * @var CompilationLogRepository
      */
-    public function __construct()
+    protected $repository;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @param CompilationLogRepository $repository
+     */
+    public function __construct(CompilationLogRepository $repository)
     {
+        $this->repository = $repository;
         // Setup first compilation in queue
         $this->middleware([
             CompilationBuilder::class,
@@ -43,14 +54,17 @@ class CompilationController extends Controller
     {
         /** @var User $user */
         $user = \Auth::authenticate();
-
+        /** @var Compilation[]|Collection $compilations */
         $compilations = $user->compilations()
             ->with('videos')
             ->latest()
             ->paginate(6);
 
+        $isStandingInQueue = $this->repository->isStandingInQueue($user, Carbon::now());
+
         return view('compilations', [
             'compilations' => $compilations,
+            'isStandingInQueue' => $isStandingInQueue,
         ]);
     }
 
@@ -61,9 +75,6 @@ class CompilationController extends Controller
      */
     public function show(Request $request, Compilation $compilation): View
     {
-        /** @var User $user */
-        $user = \Auth::getUser();
-
         return view('compilation', [
             'compilation' => $compilation,
             'videos' => $compilation->videos,

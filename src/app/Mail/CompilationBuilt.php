@@ -43,8 +43,8 @@ class CompilationBuilt extends Mailable
         $name = 'YouCompilations. Compilation is collected! Date: ' . $this->compilation->created_at->toDateString();
 
         return $this
-            ->from(env('MAIL_USERNAME'))
             ->subject($name)
+            ->from(env('MAIL_FROM_ADDRESS'))
             ->view('emails.compilations.built')
             ->with(['compilation' => $this->compilation]);
     }
