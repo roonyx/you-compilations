@@ -265,7 +265,7 @@ class CompilationService
         }
 
         //TODO: add relevanceLanguage in user panel
-        $params['relevanceLanguage'] = 'ru';
+        $params['relevanceLanguage'] = 'en';
 
         $paginateResults = \Youtube::paginateResults($params, $this->tokenCache[$q] ?? null);
 
