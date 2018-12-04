@@ -1,18 +1,22 @@
-version: '3.7'
+version: '3.2'
 
 services:
 
   server:
     build:
-      context: ./
-      dockerfile: ./docker/app.fpm.dockerfile
+      context: .
+      dockerfile: ./services/fpm/Dockerfile
     volumes:
       - ./src/:/var/www/app
+    env_file:
+      - ./services/fpm/environments/.env
+    depends_on:
+      - db
 
   nginx:
     build:
       context: .
-      dockerfile: ./docker/nginx.fpm.dockerfile
+      dockerfile: ./services/nginx/Dockerfile
     volumes:
       - ./src/:/var/www/app
     ports:
@@ -21,18 +25,32 @@ services:
       - server
 
   db:
-    image: mariadb:10.3
+    image: mariadb:10.2.19
     restart: on-failure
     ports:
       - "33061:3306"
     volumes:
-      - ./.database:/var/lib/mysql
+      - database:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: 123
       MYSQL_DATABASE: you-compilations
-      MYSQL_USER: you-compilatipns
+      MYSQL_USER: you-compilations
       MYSQL_PASSWORD: 12345
+
+  queue:
+    build:
+      context: .
+      dockerfile: ./services/queue/Dockerfile
+    restart: on-failure
+    volumes:
+      - ./src/:/var/www/app
+    env_file:
+      - ./services/fpm/environments/.env
+    depends_on:
+      - server
 
 networks:
   default:
-    name: you-compilations
+
+volumes:
+  database:
