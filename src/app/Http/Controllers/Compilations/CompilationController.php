@@ -62,10 +62,7 @@ class CompilationController extends Controller
 
         $isStandingInQueue = $this->repository->isStandingInQueue($user, Carbon::now());
 
-        return view('compilations', [
-            'compilations' => $compilations,
-            'isStandingInQueue' => $isStandingInQueue,
-        ]);
+        return view('compilations', compact('compilations', 'isStandingInQueue'));
     }
 
     /**
@@ -75,9 +72,7 @@ class CompilationController extends Controller
      */
     public function show(Request $request, Compilation $compilation): View
     {
-        return view('compilation', [
-            'compilation' => $compilation,
-            'videos' => $compilation->videos,
-        ]);
+        $videos = $compilation->videos;
+        return view('compilation', compact('compilation', 'videos'));
     }
 }
