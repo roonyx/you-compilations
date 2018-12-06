@@ -1,5 +1,5 @@
 #!make
-export $(shell sed 's/=.*//' .env)
+export $(shell sed 's/=.*//' ./src/.env)
 RED='\033[0;31m'         #  ${RED}
 GREEN='\033[0;32m'       #  ${GREEN}
 YELLOW='\033[0;33m'      #  ${GREEN}
@@ -16,6 +16,11 @@ rebuild: stop
 up:
 	@echo ${BOLD}"\nSpinning up containers...\n" ${END_COLOR}
 	docker-compose up -d
+	@$(MAKE) --no-print-directory status
+
+up-build:
+	@echo ${BOLD}"\nSpinning up containers...\n" ${END_COLOR}
+	docker-compose up -d --build
 	@$(MAKE) --no-print-directory status
 
 stop:
