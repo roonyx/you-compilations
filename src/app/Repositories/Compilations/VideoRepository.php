@@ -10,10 +10,10 @@ declare(strict_types=1);
 
 namespace App\Repositories\Compilations;
 
-use App\Entity\Content;
-use App\Models\Compilations\Compilation;
-use App\Models\Compilations\Video;
 use App\Models\User;
+use App\Entity\Content;
+use App\Models\Compilations\Video;
+use App\Models\Compilations\Compilation;
 use App\Repositories\RepositoryInterface;
 
 /**
@@ -59,7 +59,7 @@ class VideoRepository implements RepositoryInterface
      */
     public function getVideosAvailable($user, $contentIds)
     {
-        return  Video::query()
+        return Video::query()
             ->leftJoin(Compilation::TABLE, 'compilations.id', '=', 'videos.compilation_id')
             ->where('compilations.user_id', '=', $user->getKey())
             ->whereIn('videos.content_id', $contentIds)
@@ -108,7 +108,7 @@ class VideoRepository implements RepositoryInterface
             $videos[] = [
                 'title' => $content->title,
                 'description' => $content->description,
-                'thumbnails' => json_encode($content->images),
+                'thumbnails' => (string)json_encode($content->images ?? []),
                 'content_id' => $content->contentId,
                 'compilation_id' => $compilationId,
             ];

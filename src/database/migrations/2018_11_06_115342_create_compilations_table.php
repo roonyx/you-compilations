@@ -37,7 +37,7 @@ class CreateCompilationsTable extends Migration
 
             $table->string('title', 300);
             $table->text('description');
-            $table->json('thumbnails');
+            $table->text('thumbnails');
 
             $table->unsignedInteger('compilation_id');
             $table
