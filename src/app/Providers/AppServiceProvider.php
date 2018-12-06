@@ -8,7 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use App\Repositories\Users\UserRepository;
 use App\Repositories\Compilations\TagRepository;
 use App\Repositories\Compilations\CompilationRepository;
-use Repositories\Compilations\CompilationLogRepository;
+use App\Repositories\Compilations\CompilationLogRepository;
 
 /**
  * Class AppServiceProvider
@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        \Schema::defaultStringLength(191);
     }
 
     /**
