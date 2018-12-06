@@ -14,6 +14,7 @@ use Mail;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Entity\Content;
+use Illuminate\Log\Logger;
 use App\Mail\CompilationBuilt;
 use App\Entity\ContentStatistic;
 use App\Models\Compilations\Compilation;
@@ -37,6 +38,10 @@ class CompilationService
     const VIDEO_PARSE_IN_ONE_REQUEST = 30;
 
     /**
+     * @var Logger
+     */
+    protected $logger;
+    /**
      * @var UserRepository
      */
     protected $userRepository;
@@ -48,6 +53,7 @@ class CompilationService
      * @var CompilationRepository
      */
     protected $compilationRepository;
+
     /**
      * Caching tokens (nextPageToken) for many tags
      *
@@ -58,16 +64,19 @@ class CompilationService
     /**
      * CompilationService constructor.
      *
+     * @param Logger $logger
      * @param UserRepository $userRepository
      * @param VideoRepository $videoRepository
      * @param CompilationRepository $compilationRepository
      */
     public function __construct(
+        Logger $logger,
         UserRepository $userRepository,
         VideoRepository $videoRepository,
         CompilationRepository $compilationRepository
     )
     {
+        $this->logger = $logger;
         $this->userRepository = $userRepository;
         $this->videoRepository = $videoRepository;
         $this->compilationRepository = $compilationRepository;
@@ -83,7 +92,6 @@ class CompilationService
      */
     public function compilation(int $userId, array $tags): bool
     {
-        echo Carbon::now()->toDateTimeString() . PHP_EOL;
         /** @var User $user */
         $user = $this->userRepository->find($userId);
         /** @var Content[] $uniqueContents */
@@ -104,11 +112,15 @@ class CompilationService
         ]);
 
         // Storing contents in database
-        $this->videoRepository->storeContents($compilation->getKey(), $contents);
-        // Sending reminder about new compilation
-        $this->sendEmail($user, $compilation);
-
-        echo Carbon::now()->toDateTimeString() . PHP_EOL;
+        if ($storeResult = $this->videoRepository->storeContents($compilation->getKey(), $contents)) {
+            // Sending reminder about new compilation
+            $this->sendEmail($user, $compilation);
+            $this->logger->info(
+                'Success stored videos. Email: ' . $user->email
+            );
+        } else {
+            $this->logger->error('Compilations don\'t stored.');
+        }
 
         return true;
     }

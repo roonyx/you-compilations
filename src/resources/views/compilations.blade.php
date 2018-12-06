@@ -57,10 +57,11 @@ $user = \Auth::user();
                     @foreach($compilations as $compilation)
                         <a href="{{ route('compilation', ['compilation' => $compilation]) . '/#scroll' }}">
                             <div class="card">
-                                <img class="card-img-top"
-                                     src="{{ $compilation->videos[0]->thumbnails[\App\Entity\Enums\VideoSize::MEDIUM]['url'] }}"
-                                     alt="Card image cap">
-
+                                @isset($compilation->videos[0])
+                                    <img class="card-img-top"
+                                         src="{{ $compilation->videos[0]->thumbnails[\App\Entity\Enums\VideoSize::MEDIUM]['url'] }}"
+                                         alt="Card image cap">
+                                @endisset
                                 <div class="overlay">
                                     Date: {{ $compilation->created_at->toDateString() }}
                                 </div>
