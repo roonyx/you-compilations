@@ -10,9 +10,11 @@ declare(strict_types=1);
 
 namespace App\Services\Compilations;
 
+use Psr\Log\LoggerInterface;
 use Illuminate\Support\Collection;
 use App\Models\Compilations\Video;
 use App\Models\Compilations\Author;
+use App\Entity\Author as AuthorEntity;
 
 /**
  * Class AuthorService
@@ -38,10 +40,18 @@ class AuthorService
     protected $searchField = 'channel_id';
 
     /**
-     * Authors constructor.
+     * @var LoggerInterface
      */
-    public function __construct()
+    public $logger;
+
+    /**
+     * Authors constructor.
+     *
+     * @param LoggerInterface $logger
+     */
+    public function __construct(LoggerInterface $logger)
     {
+        $this->logger = $logger;
         $this->items = collect([]);
         $this->loadModels();
     }
@@ -64,10 +74,18 @@ class AuthorService
         $combiner = [];
 
         foreach ($videos as $video) {
-            if ($info = \Youtube::getVideoInfo($video->content_id)) {
-                $snippet = $info->snippet;
-                $combiner[$video->content_id] = $snippet->channelId;
-                $service->add($snippet->channelTitle, $snippet->channelId);
+            try {
+                if ($info = \Youtube::getVideoInfo($video->content_id)) {
+                    $snippet = $info->snippet;
+                    $combiner[$video->content_id] = $snippet->channelId;
+
+                    $infoChannel = \Youtube::getChannelById($snippet->channelId);
+                    $authorEntity = AuthorEntity::parse($infoChannel);
+
+                    $service->add($authorEntity);
+                }
+            } catch (\Exception $exception) {
+                $service->logger->error(\parseException($exception));
             }
         }
 
@@ -80,16 +98,12 @@ class AuthorService
     }
 
     /**
-     * @param string $name
-     * @param string $channelId
+     * @param AuthorEntity $author
      * @return void
      */
-    public function add(string $name, string $channelId): void
+    public function add(AuthorEntity $author): void
     {
-        $this->items->push([
-            'name' => $name,
-            'channel_id' => $channelId,
-        ]);
+        $this->items->push($author->getValues());
     }
 
     /**

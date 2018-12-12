@@ -77,6 +77,37 @@ class Compilation extends Model
     }
 
     /**
+     * @return Collection
+     */
+    public function authors(): Collection
+    {
+        return Author::query()
+            ->select('authors.*')
+            ->leftJoin(Video::TABLE, 'videos.author_id', '=', 'authors.id')
+            ->leftJoin(Compilation::TABLE, 'compilations.id', '=', 'videos.compilation_id')
+            ->where('compilations.id', '=', \DB::raw($this->id))
+            ->get();
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function duration()
+    {
+        $videos = $this->videos;
+
+        $zeroTime = new \DateTime('00:00');
+        $diffTime = clone $zeroTime;
+
+        foreach ($videos as $video) {
+            $interval = new \DateInterval($video->duration);
+            $diffTime->add($interval);
+        }
+
+        return $diffTime->diff($zeroTime)->format('%h:%i:%s');
+    }
+
+    /**
      * @param Compilation $compilation
      * @return array
      */
@@ -89,7 +120,7 @@ class Compilation extends Model
             return [];
         }
 
-        $collections =  $videos->toArray();
+        $collections = $videos->toArray();
         $video = \array_shift($collections);
 
         return $video['thumbnails'][VideoSize::HIGH]

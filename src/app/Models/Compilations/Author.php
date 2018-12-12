@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $id
  * @property string $name
  * @property string $channel_id
+ * @property array $thumbnails
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Compilations\Author whereId($value)
@@ -44,7 +45,14 @@ class Author extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'channel_id',
+        'name', 'channel_id', 'thumbnails'
+    ];
+
+    /**
+     * @var array
+     */
+    protected $casts = [
+        'thumbnails' => 'array',
     ];
 
     /**

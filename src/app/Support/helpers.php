@@ -47,6 +47,6 @@ if (!\function_exists('parseException')) {
      */
     function parseException($exception)
     {
-        return 'File: ' . $exception->getFile() . '; Line: ' . $exception->getLine() . '; Message: ' . $exception->getMessage() . PHP_EOL;
+        return 'File: ' . $exception->getFile() . '; Line: ' . $exception->getLine() . '; Message: ' . $exception->getMessage();
     }
 }

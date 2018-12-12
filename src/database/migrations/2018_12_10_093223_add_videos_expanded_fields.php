@@ -24,12 +24,15 @@ class AddVideosExpandedFields extends Migration
             $table->increments('id');
 
             $table->string('name');
+            $table->text('thumbnails');
+            $table->unsignedInteger('subscribers');
             $table->string('channel_id', 30)->unique();
 
             $table->timestamps();
         });
 
         Schema::table('videos', function (Blueprint $table) {
+            $table->string('duration', 30);
             $table->unsignedInteger('author_id')->nullable();
             $table
                 ->foreign('author_id')

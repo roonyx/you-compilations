@@ -111,6 +111,7 @@ class VideoRepository implements RepositoryInterface
                 'thumbnails' => (string)json_encode($content->images ?? []),
                 'content_id' => $content->contentId,
                 'compilation_id' => $compilationId,
+                'duration' => $content->duration,
             ];
         }
 

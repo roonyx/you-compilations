@@ -53,9 +53,5 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(CompilationLogRepository::class, function () {
             return new CompilationLogRepository();
         });
-
-        $this->app->singleton(AuthorService::class, function () {
-            return new AuthorService();
-        });
     }
 }

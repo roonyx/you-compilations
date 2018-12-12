@@ -32,6 +32,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property array $thumbnails
  * @property int $author_id
  * @property int $compilation_id
+ * @property string $duration
  * @property string $content_id Video - ID on YouTube
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -58,7 +59,7 @@ class Video extends Model
      */
     protected $fillable = [
         'compilation_id', 'content_id',
-        'title', 'description',
+        'title', 'description', 'thumbnails', 'duration'
     ];
     /**
      * @var array

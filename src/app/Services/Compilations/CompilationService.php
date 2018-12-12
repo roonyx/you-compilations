@@ -174,6 +174,7 @@ class CompilationService
 
                 $content->title = $videoInfo->snippet->title;
                 $content->description = $videoInfo->snippet->description;
+                $content->duration = $videoInfo->contentDetails->duration;
                 $content->images = $videoInfo->snippet->thumbnails;
 
                 $contents[] = $content;

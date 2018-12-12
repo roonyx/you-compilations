@@ -29,7 +29,9 @@ $videos = $compilation->videos;
                         <div class="card-body">
                             <h5 class="card-title">{{ $video->title }}</h5>
                             <p class="card-text">{!! (parseUrlInText(str_limit(htmlspecialchars($video->description), 100))) !!}</p>
-                            <a href="{{ $video->author->channelLink() }}" class="card-link">Channel: {{ $video->author->name }}</a>
+                            @if(!is_null($video->author))
+                                <a href="{{ $video->author->channelLink() }}" class="card-link">Channel: {{ $video->author->name }}</a>
+                            @endif
                         </div>
                     </div>
                 @endforeach

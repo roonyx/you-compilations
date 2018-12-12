@@ -90,28 +90,48 @@ $user = \Auth::user();
                 <div class="row">
                     @foreach($compilations as $compilation)
 
-                            <div class="col-md-4">
-                                <div class="card">
+                        <div class="col-md-4">
+                            <div class="card">
+                                <a href="{{ route('compilation', ['compilation' => $compilation]) . '/#scroll' }}">
                                     <img class="card-img-top"
                                          src="{{  $compilation->videos[0]->thumbnails[\App\Entity\Enums\VideoSize::MEDIUM]['url'] }}"
                                          alt="Card image cap">
-                                    <div class="card-body">
-                                        <p class="card-text">Date: {{ $compilation->created_at->toDateString() }}</p>
-                                    </div>
+                                </a>
+                                <div class="card-body">
+                                    <span>
+                                        <i class="material-icons">person</i>
+                                        @php
+                                            $authors = $compilation->authors();
+                                            $authors = $authors->map(function (\App\Models\Compilations\Author $author) {
+                                                return [
+                                                    'url' => $author->channelLink(),
+                                                    'img' => $author->thumbnails[\App\Entity\Enums\AvatarSize::DEFAULT]['url'],
+                                                ];
+                                            })->unique()->splice(0, 8);
+                                        @endphp
+                                        @foreach($authors as $author)
+                                            <a href="{{ $author['url'] }}" target="_blank">
+                                                <img class="rounded-circle img-fluid" width="20px" height="20px" style="margin-top: -10px"
+                                                     src="{{ $author['img'] }}">
+                                            </a>
+                                        @endforeach
+                                    </span>
+                                    <p class="card-text"><i class="material-icons">access_time</i> <span>{{ $compilation->duration() }}</span></p>
                                 </div>
                             </div>
+                        </div>
 
                         {{--<a href="{{ route('compilation', ['compilation' => $compilation]) . '/#scroll' }}">--}}
-                            {{--<div class="card">--}}
-                                {{--@isset($compilation->videos[0])--}}
-                                    {{--<img class="card-img-top"--}}
-                                         {{--src="{{ $compilation->videos[0]->thumbnails[\App\Entity\Enums\VideoSize::MEDIUM]['url'] }}"--}}
-                                         {{--alt="Card image cap">--}}
-                                {{--@endisset--}}
-                                {{--<div class="overlay">--}}
-                                    {{--Date: {{ $compilation->created_at->toDateString() }}--}}
-                                {{--</div>--}}
-                            {{--</div>--}}
+                        {{--<div class="card">--}}
+                        {{--@isset($compilation->videos[0])--}}
+                        {{--<img class="card-img-top"--}}
+                        {{--src="{{ $compilation->videos[0]->thumbnails[\App\Entity\Enums\VideoSize::MEDIUM]['url'] }}"--}}
+                        {{--alt="Card image cap">--}}
+                        {{--@endisset--}}
+                        {{--<div class="overlay">--}}
+                        {{--Date: {{ $compilation->created_at->toDateString() }}--}}
+                        {{--</div>--}}
+                        {{--</div>--}}
                         {{--</a>--}}
                     @endforeach
                 </div>
