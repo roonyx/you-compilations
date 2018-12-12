@@ -71,10 +71,10 @@ class ContentStatistic
      */
     protected static function validateFields(\stdClass $object): bool
     {
-        return \property_exists($object, 'statistics')
+        return \property_exists($object, 'snippet')
+            && \property_exists($object, 'statistics')
             && \property_exists($object->statistics, 'viewCount')
             && \property_exists($object->statistics, 'likeCount')
-            && \property_exists($object, 'snippet')
             && \property_exists($object->snippet, 'publishedAt');
     }
 }

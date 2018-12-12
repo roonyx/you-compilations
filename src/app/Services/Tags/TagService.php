@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace App\Services\Tags;
 
-use App\Models\Tag;
 use App\Models\User;
+use App\Models\Compilations\Tag;
 use App\Repositories\Compilations\TagRepository;
 use App\Http\Requests\Compilations\Tags\TagRequest;
 use Illuminate\Support\Collection;
@@ -63,22 +63,21 @@ class TagService
     }
 
     /**
-     * @param array $ids
+     * @param array $tagNames
      * @return Collection
      * @throws \Exception
      */
-    protected function getTags(array $ids): Collection
+    protected function getTags(array $tagNames): Collection
     {
-        $idsTags = \array_filter($ids, function ($value) {
-            return \filter_var($value, \FILTER_VALIDATE_INT);
+        $idsTags = \array_filter($tagNames, function ($value) {
+            return is_numeric($value);
         });
 
-        $names = \array_diff($ids, $idsTags);
-        /** @var Tag[]|Collection $tags */
+        /** @var Collection|Tag[] $tags */
         $tags = Tag::findMany($idsTags);
+        $creatingTagsNames = \array_diff($tagNames, $idsTags);
 
-        foreach ($names as $name) {
-            /** @var Tag $tag */
+        foreach ($creatingTagsNames as $name) {
             $tag = $this->repository->getByName($name);
 
             if (\is_null($tag)) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Jobs;
 
 use Carbon\Carbon;
+use Psr\Log\LoggerInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -28,6 +29,10 @@ class CompilationJob implements ShouldQueue
      */
     public $userId;
 
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
     /**
      * @var UserRepository
      */
@@ -60,6 +65,7 @@ class CompilationJob implements ShouldQueue
     public function handle()
     {
         try {
+            $this->logger = app(LoggerInterface::class);
             $this->userRepository = app(UserRepository::class);
             $this->compilationService = app(CompilationService::class);
             $this->compilationLogRepository = app(CompilationLogRepository::class);
@@ -93,11 +99,12 @@ class CompilationJob implements ShouldQueue
             } catch (\Exception $exception) {
                 $log->status = CompilationLog::FAILED;
                 $log->description = $exception->getMessage();
+                $this->logger->error(\parseException($exception));
             }
 
             $log->save();
         } catch (\Exception $exception) {
-            echo $exception->getMessage() . PHP_EOL;
+            $this->logger->error(\parseException($exception));
         }
     }
 }

@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Models\Compilations;
 
-use App\Models\Tag;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -31,14 +30,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  *  - maxres     (1280720)
  *
  * @property array $thumbnails
+ * @property int $author_id
  * @property int $compilation_id
- * @property int $content_id Video - ID on YouTube
+ * @property string $content_id Video - ID on YouTube
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Compilations\Video whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Compilations\Video whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Compilations\Video whereUpdatedAt($value)
+ *
+ * @property Author $author
  *
  * @mixin \Eloquent
  */
@@ -64,6 +66,19 @@ class Video extends Model
     protected $casts = [
         'thumbnails' => 'array',
     ];
+
+    /**
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
+     * @return BelongsTo
+     */
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(Author::class);
+    }
 
     /**
      * @return BelongsTo

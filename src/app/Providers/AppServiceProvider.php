@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Services\Compilations\AuthorService;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Users\UserRepository;
 use App\Repositories\Compilations\TagRepository;
@@ -51,6 +52,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(CompilationLogRepository::class, function () {
             return new CompilationLogRepository();
+        });
+
+        $this->app->singleton(AuthorService::class, function () {
+            return new AuthorService();
         });
     }
 }

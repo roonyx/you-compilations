@@ -11,6 +11,19 @@ $user = \Auth::user();
 
 @section('content')
 
+    <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet"/>
+    <script src="{{ asset('js/select2.full.min.js') }}"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.tags-multiple-select').select2({
+                placeholder: "Choose tags...",
+                tags: true,
+                tokenSeparators: [','],
+            });
+        });
+    </script>
+
     <style>
         .overlay {
             display: none;
@@ -35,9 +48,29 @@ $user = \Auth::user();
     @include('scroll')
 
     <div class="container">
+        <div class="col-md-10 ml-auto mr-auto">
+            <div class="card">
+                <div class="card-header">Enter your tags:</div>
+                <div class="card-body">
+                    <form action="{{ route('tags_store') }}" method="post" name="create_tags">
+                        @csrf
+                        <select class="tags-multiple-select" style="width: 80%" name="tags[]" multiple="multiple">
+                            @foreach ($tags as $tag)
+                                <option value="{{ $tag->id }}" selected>{{ $tag->name }}</option>
+                            @endforeach
+                        </select>
+                        <input type="submit" class="btn btn-danger btn-sm" value="Save">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
         <div class="title">
             <h2>Your compilations</h2>
         </div>
+
         <div class="col-md-10 ml-auto mr-auto">
             @if($compilations->isEmpty())
                 <div class="alert alert-info">
@@ -53,22 +86,36 @@ $user = \Auth::user();
                     </div>
                 </div>
             @else
-                <div class="card-columns">
+                {{--<div class="card-columns">--}}
+                <div class="row">
                     @foreach($compilations as $compilation)
-                        <a href="{{ route('compilation', ['compilation' => $compilation]) . '/#scroll' }}">
-                            <div class="card">
-                                @isset($compilation->videos[0])
+
+                            <div class="col-md-4">
+                                <div class="card">
                                     <img class="card-img-top"
-                                         src="{{ $compilation->videos[0]->thumbnails[\App\Entity\Enums\VideoSize::MEDIUM]['url'] }}"
+                                         src="{{  $compilation->videos[0]->thumbnails[\App\Entity\Enums\VideoSize::MEDIUM]['url'] }}"
                                          alt="Card image cap">
-                                @endisset
-                                <div class="overlay">
-                                    Date: {{ $compilation->created_at->toDateString() }}
+                                    <div class="card-body">
+                                        <p class="card-text">Date: {{ $compilation->created_at->toDateString() }}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </a>
+
+                        {{--<a href="{{ route('compilation', ['compilation' => $compilation]) . '/#scroll' }}">--}}
+                            {{--<div class="card">--}}
+                                {{--@isset($compilation->videos[0])--}}
+                                    {{--<img class="card-img-top"--}}
+                                         {{--src="{{ $compilation->videos[0]->thumbnails[\App\Entity\Enums\VideoSize::MEDIUM]['url'] }}"--}}
+                                         {{--alt="Card image cap">--}}
+                                {{--@endisset--}}
+                                {{--<div class="overlay">--}}
+                                    {{--Date: {{ $compilation->created_at->toDateString() }}--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
+                        {{--</a>--}}
                     @endforeach
                 </div>
+                {{--</div>--}}
                 <div class="row justify-content-center">
                     <div class="pagination-info">
                         {{ $compilations->links() }}

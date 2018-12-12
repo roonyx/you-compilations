@@ -2,13 +2,13 @@
 /**
  * File: Tag.php
  * Author: Vladimir Pogarsky <pogarsky.vladimir@roonyx.team>
- * Date: 2018-11-06
- * Copyright (c) 2018
+ * Date: 2018-12-10
+ * Copyright Roonyx.tech (c) 2018
  */
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Models\Compilations;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
@@ -21,12 +21,12 @@ use Illuminate\Database\Eloquent\Collection;
  * @property string $description
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Tag whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Tag whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Tag whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Tag whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Tag whereByUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Tag[]|Collection whereByNames($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\static whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\static whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\static whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\static whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\static whereByUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\static[]|Collection whereByNames($value)
  *
  * @mixin \Eloquent
  */
