@@ -16,7 +16,7 @@ use Carbon\Carbon;
  * Class ContentStatistic
  * @package App\Entity
  */
-class ContentStatistic
+class ContentStatistic extends Entity
 {
     /**
      * @var integer
@@ -65,12 +65,12 @@ class ContentStatistic
 
             $class = new self(
                 $object->snippet->publishedAt,
-                (int)$statisticParams->viewCount,
-                (int)$statisticParams->likeCount
+                (int)self::getValue($statisticParams, 'viewCount', 0),
+                (int)self::getValue($statisticParams, 'likeCount', 0)
             );
 
-            $class->dislikes = $statisticParams->dislikeCount;
-            $class->comments = $statisticParams->commentCount;
+            $class->dislikes = (int)self::getValue($statisticParams, 'dislikeCount', 0);
+            $class->comments = (int)self::getValue($statisticParams, 'commentCount', 0);
 
             return $class;
         }
@@ -85,11 +85,6 @@ class ContentStatistic
     protected static function validateFields(\stdClass $object): bool
     {
         return \property_exists($object, 'snippet')
-            && \property_exists($object, 'statistics')
-            && \property_exists($object->statistics, 'viewCount')
-            && \property_exists($object->statistics, 'likeCount')
-            && \property_exists($object->statistics, 'dislikeCount')
-            && \property_exists($object->statistics, 'commentCount')
-            && \property_exists($object->snippet, 'publishedAt');
+            && \property_exists($object, 'statistics');
     }
 }

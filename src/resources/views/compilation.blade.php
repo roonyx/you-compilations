@@ -23,8 +23,8 @@ $videos = $compilation->videos;
                     <div class="card">
                         <a href="https://www.youtube.com/watch?v={{ $video->content_id }}" target="_blank">
                             <img class="card-img-top"
-                                 src="{!! $video->prettyImage()['url'] !!}"
-                                 alt="Card image cap">
+                                 src="{{ $video->prettyImage() }}"
+                                 alt="{{ $video->title }}">
                         </a>
                         <div class="card-body">
                             <h5 class="card-title">{{ $video->title }}</h5>
@@ -42,7 +42,7 @@ $videos = $compilation->videos;
                                         <div>
                                             <div style="display: inline; position: relative; top: 4px;">
                                                 <img class="rounded-circle img-fluid" width="20px" height="20px" style="margin-top: -10px"
-                                                     src="{{ $video->author->thumbnails[\App\Entity\Enums\AvatarSize::DEFAULT]['url'] }}">
+                                                     src="{{ $video->author->prettyImage()}}">
                                             </div>
                                             <div style="display: inline;">
                                                 {{ $video->author->name }}
