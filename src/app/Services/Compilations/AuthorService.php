@@ -73,8 +73,8 @@ class AuthorService
 
         $combiner = [];
 
-        foreach ($videos as $video) {
-            try {
+        try {
+            foreach ($videos as $video) {
                 if ($info = \Youtube::getVideoInfo($video->content_id)) {
                     $snippet = $info->snippet;
                     $combiner[$video->content_id] = $snippet->channelId;
@@ -84,14 +84,14 @@ class AuthorService
 
                     $service->add($authorEntity);
                 }
-            } catch (\Exception $exception) {
-                $service->logger->error(\parseException($exception));
             }
-        }
 
-        if ($service->insert()) {
-            $service->combineWithVideo($videos, $combiner);
-            return true;
+            if ($service->insert()) {
+                $service->combineWithVideo($videos, $combiner);
+                return true;
+            }
+        } catch (\Exception $exception) {
+            $service->logger->error(\parseException($exception));
         }
 
         return false;
