@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Services\Compilations\AuthorService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Psr\Log\LoggerInterface;
 
 class CreatingAuthors extends Command
 {
@@ -35,17 +36,20 @@ class CreatingAuthors extends Command
     /**
      * Execute the console command.
      *
+     * @param LoggerInterface $logger
      * @return mixed
      * @throws \Exception
      */
-    public function handle()
+    public function handle(LoggerInterface $logger)
     {
-        $date = Carbon::parse('2018-12-13T11:40:00.000Z');
-        $dateCurrent = Carbon::now();
+        $logger->info('Start authors parsing...');
 
-        $interval = $dateCurrent->diffAsCarbonInterval($date);
+        try {
+            AuthorService::parse();
+        } catch (\Exception $exception) {
+            $logger->error(\parseException($exception));
+        }
 
-        dd((string)$interval);
-//        AuthorService::parse();
+        $logger->info('Authors parsed...');
     }
 }
