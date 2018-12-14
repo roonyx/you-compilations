@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Compilations\Tag;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Notifications\Notifiable;
@@ -43,6 +44,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\User withoutTrashed()
  *
  * @property Tag[]|Collection $tags
+ * @property Compilation[]|Collection $compilations
  *
  * @mixin \Eloquent
  */
@@ -112,14 +114,5 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         $this->tags()->attach($tags);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isCompilationInProcess(): bool
-    {
-        $repository = app(CompilationLogRepository::class);
-        return $repository;
     }
 }

@@ -60,9 +60,10 @@ class CompilationController extends Controller
             ->latest()
             ->paginate(6);
 
+        $tags = $user->tags;
         $isStandingInQueue = $this->repository->isStandingInQueue($user, Carbon::now());
 
-        return view('compilations', compact('compilations', 'isStandingInQueue'));
+        return view('compilations', compact('tags','compilations', 'isStandingInQueue'));
     }
 
     /**
