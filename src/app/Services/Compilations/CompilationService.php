@@ -31,7 +31,7 @@ class CompilationService
     /**
      * The amount of video to compilation
      */
-    const COMPILATION_VIDEO_AMOUNT = 15;
+    const COMPILATION_VIDEO_AMOUNT = 10;
     /**
      * The amount of video parse in one request on YouTube API
      */
@@ -113,6 +113,9 @@ class CompilationService
 
         // Storing contents in database
         if ($storeResult = $this->videoRepository->storeContents($compilation->getKey(), $contents)) {
+            if (!AuthorService::parse()) {
+                throw new \Exception("Error when parse video authors.");
+            }
             // Sending reminder about new compilation
             $this->sendEmail($user, $compilation);
             $this->logger->info(
@@ -171,11 +174,12 @@ class CompilationService
 
                 $content->title = $videoInfo->snippet->title;
                 $content->description = $videoInfo->snippet->description;
+                $content->duration = $videoInfo->contentDetails->duration;
                 $content->images = $videoInfo->snippet->thumbnails;
 
                 $contents[] = $content;
             } catch (\Exception $exception) {
-                echo $exception->getMessage() . PHP_EOL;
+                $this->logger->error(\parseException($exception));
                 continue;
             }
         }
@@ -313,11 +317,11 @@ class CompilationService
     protected function sendEmail(User $user, Compilation $compilation): void
     {
         try {
-            echo 'Email is sending on currently email: ' . $user->email . PHP_EOL;
+            $this->logger->info('Email is sending on currently email: ' . $user->email);
             Mail::to($user)->send(new CompilationBuilt($compilation));
-            echo 'Email is sent...' . PHP_EOL;
+            $this->logger->info('Email is sent: ' . $user->email);
         } catch (\Exception $exception) {
-            echo $exception->getMessage() . PHP_EOL;
+            $this->logger->error(\parseException($exception));
         }
     }
 }

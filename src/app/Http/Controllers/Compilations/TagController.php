@@ -10,11 +10,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Compilations;
 
-use App\Models\Tag;
-use Illuminate\Http\Request;
 use App\Services\Tags\TagService;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Api\TagResource;
 use App\Http\Middleware\CompilationBuilder;
 use App\Http\Requests\Compilations\Tags\TagRequest;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -43,25 +40,6 @@ class TagController extends Controller
         $this->middleware([
             CompilationBuilder::class,
         ]);
-    }
-
-    /**
-     * @param Request $request
-     * @param string $name
-     * @return array|\Illuminate\Http\Resources\Json\AnonymousResourceCollection
-     */
-    public function index(Request $request, ?string $name = '')
-    {
-        if (!empty($name)) {
-            $tags = Tag::query()
-                ->where('name', 'LIKE', "{$name}%")
-                ->limit(15)
-                ->get();
-
-            return TagResource::collection($tags);
-        }
-
-        return [];
     }
 
     /**

@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Repositories\Compilations;
 
-use App\Models\Tag;
+use App\Models\Compilations\Tag;
 use App\Models\Compilations\Video;
 use App\Models\Compilations\Compilation;
 use App\Repositories\RepositoryInterface;

@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Repositories\Compilations;
 
-use App\Models\Tag;
+use App\Models\Compilations\Tag;
 use App\Repositories\RepositoryInterface;
 
 /**
@@ -29,7 +29,6 @@ class TagRepository implements RepositoryInterface
         $tag = Tag::create($attributes);
         return $tag;
     }
-
 
     /**
      * @param Tag $tag

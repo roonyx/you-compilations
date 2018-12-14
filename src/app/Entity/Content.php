@@ -54,6 +54,10 @@ class Content
      * @var ContentStatistic
      */
     public $statistic;
+    /**
+     * @var string
+     */
+    public $duration;
 
     /**
      * Content constructor.

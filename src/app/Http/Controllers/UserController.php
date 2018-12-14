@@ -18,14 +18,14 @@ use App\Models\User;
  */
 class UserController extends Controller
 {
-    public function index()
-    {
-        /** @var User $user */
-        $user = \Auth::user();
-        $tags = $user->tags;
-
-        return view('user.settings', [
-            'tags' => $tags,
-        ]);
-    }
+//    public function index()
+//    {
+//        /** @var User $user */
+//        $user = \Auth::user();
+//        $tags = $user->tags;
+//
+//        return view('user.settings', [
+//            'tags' => $tags,
+//        ]);
+//    }
 }

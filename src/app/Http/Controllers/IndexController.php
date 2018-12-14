@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
+use Illuminate\Contracts\View\Factory;
 use App\Models\Compilations\Compilation;
-use Illuminate\Support\Collection;
 
 /**
  * Class IndexController
@@ -22,12 +23,20 @@ class IndexController extends Controller
     {
         /** @var Compilation[] $compilations */
         $compilations = Compilation::query()
-            ->latest()
-            ->limit(15)
-            ->get();
+            ->with('videos')
+            ->orderBy('created_at')
+            ->paginate(15);
 
         return view('index', [
             'compilations' => $compilations,
         ]);
+    }
+
+    /**
+     * @return Factory|View
+     */
+    public function about()
+    {
+        return view('about');
     }
 }
