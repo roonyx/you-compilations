@@ -14,7 +14,7 @@ namespace App\Entity;
  * Class Author
  * @package App\Entity
  */
-class Author
+class Author extends Entity
 {
     /**
      * @var string
@@ -87,9 +87,11 @@ class Author
             $class->name = $object->snippet->title;
             $class->thumbnails = $object->snippet->thumbnails;
 
-            $class->subscribersCount = $object->statistics->hiddenSubscriberCount
-                ? $object->statistics->subscriberCount
-                : 0;
+            $class->subscribersCount = static::getValue(
+                $object->statistics,
+                'subscriberCount',
+                0
+            );
 
             return $class;
         }
@@ -104,6 +106,8 @@ class Author
     protected static function validateFields(\stdClass $object): bool
     {
         return \property_exists($object, 'id')
-            && \property_exists($object, 'kind');
+            && \property_exists($object, 'kind')
+            && \property_exists($object, 'snippet')
+            && \property_exists($object, 'statistics');
     }
 }

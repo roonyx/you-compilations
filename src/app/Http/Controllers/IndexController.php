@@ -24,7 +24,7 @@ class IndexController extends Controller
         /** @var Compilation[] $compilations */
         $compilations = Compilation::query()
             ->with('videos')
-            ->orderBy('created_at')
+            ->orderByDesc('created_at')
             ->paginate(15);
 
         return view('index', [

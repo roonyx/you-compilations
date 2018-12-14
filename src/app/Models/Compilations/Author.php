@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Models\Compilations;
 
+use App\Entity\Enums\AvatarSize;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -69,5 +70,19 @@ class Author extends Model
     public function channelLink(): string
     {
         return 'https://www.youtube.com/channel/' . $this->channel_id;
+    }
+
+    /**
+     * @return string
+     */
+    public function prettyImage(): string
+    {
+        $thumbnails = $this->thumbnails;
+
+        if (empty($thumbnails[AvatarSize::DEFAULT]) || empty($thumbnails[AvatarSize::DEFAULT]['url'])) {
+            return '';
+        }
+
+        return $thumbnails[AvatarSize::DEFAULT]['url'];
     }
 }
