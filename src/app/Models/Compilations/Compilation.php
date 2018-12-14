@@ -100,11 +100,20 @@ class Compilation extends Model
         $diffTime = clone $zeroTime;
 
         foreach ($videos as $video) {
-            $interval = new \DateInterval($video->duration);
-            $diffTime->add($interval);
+            if ($video->duration) {
+                $diffTime->add(
+                    new \DateInterval($video->duration)
+                );
+            }
         }
 
-        return $diffTime->diff($zeroTime)->format('%h:%i:%s');
+        if ($zeroTime->getTimestamp() == $diffTime->getTimestamp()) {
+            return '';
+        }
+
+        return $diffTime
+            ->diff($zeroTime)
+            ->format('%h:%i:%s');
     }
 
     /**
@@ -116,17 +125,13 @@ class Compilation extends Model
         /** @var Video[]|Collection $videos */
         $videos = $compilation->videos;
 
-        if (empty($videos)) {
+        if ($videos->isEmpty()) {
             return [];
         }
 
-        $collections = $videos->toArray();
-        $video = \array_shift($collections);
+        /** @var Video $video */
+        $video = $videos->first();
 
-        return $video['thumbnails'][VideoSize::HIGH]
-            ?? $video['thumbnails'][VideoSize::MAXRES]
-            ?? $video['thumbnails'][VideoSize::MEDIUM]
-            ?? $video['thumbnails'][VideoSize::STANDARD]
-            ?? [];
+        return $video->prettyImage();
     }
 }

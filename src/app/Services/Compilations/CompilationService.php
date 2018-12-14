@@ -31,7 +31,7 @@ class CompilationService
     /**
      * The amount of video to compilation
      */
-    const COMPILATION_VIDEO_AMOUNT = 15;
+    const COMPILATION_VIDEO_AMOUNT = 10;
     /**
      * The amount of video parse in one request on YouTube API
      */

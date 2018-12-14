@@ -44,6 +44,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\User withoutTrashed()
  *
  * @property Tag[]|Collection $tags
+ * @property Compilation[]|Collection $compilations
  *
  * @mixin \Eloquent
  */

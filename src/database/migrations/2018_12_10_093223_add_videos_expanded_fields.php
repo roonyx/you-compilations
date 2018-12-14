@@ -25,14 +25,18 @@ class AddVideosExpandedFields extends Migration
 
             $table->string('name');
             $table->text('thumbnails');
-            $table->unsignedInteger('subscribers');
+            $table->unsignedInteger('subscribers')->default(0);
             $table->string('channel_id', 30)->unique();
 
             $table->timestamps();
         });
 
         Schema::table('videos', function (Blueprint $table) {
-            $table->string('duration', 30);
+            $table->unsignedInteger('views')->default(0);
+            $table->unsignedInteger('likes')->default(0);
+            $table->unsignedInteger('dislikes')->default(0);
+            $table->unsignedInteger('comments')->default(0);
+            $table->string('duration', 30)->nullable();
             $table->unsignedInteger('author_id')->nullable();
             $table
                 ->foreign('author_id')
@@ -40,6 +44,8 @@ class AddVideosExpandedFields extends Migration
                 ->references('id')
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
+
+            $table->timestamp('published_at', 0)->nullable();
         });
 
         if (!AuthorService::parse()) {
@@ -56,7 +62,14 @@ class AddVideosExpandedFields extends Migration
     {
         Schema::table('videos', function (Blueprint $table) {
             $table->dropForeign(['author_id']);
-            $table->dropColumn(['author_id']);
+            $table->dropColumn([
+                'author_id',
+                'views',
+                'likes',
+                'dislikes',
+                'comments',
+                'duration',
+            ]);
         });
 
         Schema::dropIfExists('authors');

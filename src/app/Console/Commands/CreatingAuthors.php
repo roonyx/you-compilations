@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\Compilations\AuthorService;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class CreatingAuthors extends Command
@@ -39,6 +40,12 @@ class CreatingAuthors extends Command
      */
     public function handle()
     {
-        AuthorService::parse();
+        $date = Carbon::parse('2018-12-13T11:40:00.000Z');
+        $dateCurrent = Carbon::now();
+
+        $interval = $dateCurrent->diffAsCarbonInterval($date);
+
+        dd((string)$interval);
+//        AuthorService::parse();
     }
 }

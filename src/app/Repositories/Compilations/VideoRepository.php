@@ -112,6 +112,11 @@ class VideoRepository implements RepositoryInterface
                 'content_id' => $content->contentId,
                 'compilation_id' => $compilationId,
                 'duration' => $content->duration,
+                'views' => $content->statistic->views,
+                'likes' => $content->statistic->likes,
+                'dislikes' => $content->statistic->dislikes,
+                'comments' => $content->statistic->comments,
+                'published_at' => (string)$content->statistic->publishedAt,
             ];
         }
 

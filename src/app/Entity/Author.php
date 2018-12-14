@@ -88,7 +88,7 @@ class Author
             $class->thumbnails = $object->snippet->thumbnails;
 
             $class->subscribersCount = $object->statistics->hiddenSubscriberCount
-                ? $object->statistics->statistics->subscriberCount
+                ? $object->statistics->subscriberCount
                 : 0;
 
             return $class;

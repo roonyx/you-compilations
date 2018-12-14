@@ -21,11 +21,19 @@ class ContentStatistic
     /**
      * @var integer
      */
-    public $likes;
+    public $likes = 0;
     /**
      * @var integer
      */
-    public $views;
+    public $dislikes = 0;
+    /**
+     * @var integer
+     */
+    public $views = 0;
+    /**
+     * @var integer
+     */
+    public $comments = 0;
     /**
      * @var Carbon
      */
@@ -38,7 +46,7 @@ class ContentStatistic
      * @param int $likes
      * @param string $publishedAt
      */
-    public function __construct(int $views, int $likes, string $publishedAt)
+    public function __construct(string $publishedAt, int $views = 0, int $likes = 0)
     {
         $this->views = $views;
         $this->likes = $likes;
@@ -55,11 +63,16 @@ class ContentStatistic
         if (static::validateFields($object)) {
             $statisticParams = $object->statistics;
 
-            return new self(
+            $class = new self(
+                $object->snippet->publishedAt,
                 (int)$statisticParams->viewCount,
-                (int)$statisticParams->likeCount,
-                $object->snippet->publishedAt
+                (int)$statisticParams->likeCount
             );
+
+            $class->dislikes = $statisticParams->dislikeCount;
+            $class->comments = $statisticParams->commentCount;
+
+            return $class;
         }
 
         throw new \Exception('Error when parse content statistics object.');
@@ -75,6 +88,8 @@ class ContentStatistic
             && \property_exists($object, 'statistics')
             && \property_exists($object->statistics, 'viewCount')
             && \property_exists($object->statistics, 'likeCount')
+            && \property_exists($object->statistics, 'dislikeCount')
+            && \property_exists($object->statistics, 'commentCount')
             && \property_exists($object->snippet, 'publishedAt');
     }
 }
