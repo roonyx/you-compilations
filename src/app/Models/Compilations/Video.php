@@ -151,14 +151,21 @@ class Video extends Model
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function prettyImage(): array
+    public function prettyImage(): string
     {
         $thumbnails = $this->thumbnails;
 
-        return $thumbnails[VideoSize::STANDARD]
+        $image = $thumbnails[VideoSize::STANDARD]
+            ?? $thumbnails[VideoSize::HIGH]
             ?? $thumbnails[VideoSize::MEDIUM]
             ?? [];
+
+        if (empty($image['url'])) {
+            dd($thumbnails);
+        }
+
+        return $image['url'];
     }
 }

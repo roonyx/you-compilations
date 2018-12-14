@@ -120,13 +120,13 @@ class Compilation extends Model
      * @param Compilation $compilation
      * @return array
      */
-    public static function prettyImage(Compilation $compilation): array
+    public static function prettyImage(Compilation $compilation): string
     {
         /** @var Video[]|Collection $videos */
         $videos = $compilation->videos;
 
         if ($videos->isEmpty()) {
-            return [];
+            return '';
         }
 
         /** @var Video $video */

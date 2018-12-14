@@ -14,7 +14,7 @@ namespace App\Entity;
  * Class Content - YouTube ValueObject
  * @package App\Entity
  */
-class Content
+class Content extends Entity
 {
     /**
      * @var string

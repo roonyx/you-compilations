@@ -73,8 +73,8 @@ class AuthorService
 
         $combiner = [];
 
-        try {
-            foreach ($videos as $video) {
+        foreach ($videos as $video) {
+            try {
                 if ($info = \Youtube::getVideoInfo($video->content_id)) {
                     $snippet = $info->snippet;
                     $combiner[$video->content_id] = $snippet->channelId;
@@ -84,14 +84,14 @@ class AuthorService
 
                     $service->add($authorEntity);
                 }
+            } catch (\Exception $exception) {
+                $service->logger->error(\parseException($exception));
             }
+        }
 
-            if ($service->insert()) {
-                $service->combineWithVideo($videos, $combiner);
-                return true;
-            }
-        } catch (\Exception $exception) {
-            $service->logger->error(\parseException($exception));
+        if ($service->insert()) {
+            $service->combineWithVideo($videos, $combiner);
+            return true;
         }
 
         return false;
@@ -136,7 +136,7 @@ class AuthorService
         if ($isInDatabase) {
             $addingChannelsId = $items->pluck($this->searchField);
             $addedChannelsId = $this->models->pluck($this->searchField);
-            $addingChannelsId = $addingChannelsId->diffAssoc($addedChannelsId)->all();
+            $addingChannelsId = $addingChannelsId->diff($addedChannelsId)->all();
 
             $items = $items->filter(function ($value) use ($addingChannelsId) {
                 return \in_array($value[$this->searchField], $addingChannelsId);
@@ -151,20 +151,26 @@ class AuthorService
      */
     public function insert(): bool
     {
-        $items = $this->all();
+        try {
+            $items = $this->all();
 
-        if (empty($items)) {
-            return true;
+            if (empty($items)) {
+                return true;
+            }
+
+            $isInsert = \DB::table(Author::TABLE)->insert($this->all());
+
+            if ($isInsert) {
+                $this->models = [];
+                $this->loadModels();
+            }
+
+            return $isInsert;
+        } catch (\Exception $exception) {
+            $this->logger->error(\parseException($exception));
         }
 
-        $isInsert = \DB::table(Author::TABLE)->insert($this->all());
-
-        if ($isInsert) {
-            $this->models = [];
-            $this->loadModels();
-        }
-
-        return $isInsert;
+        return false;
     }
 
     /**
@@ -179,21 +185,28 @@ class AuthorService
     public function combineWithVideo(Collection $videos, array $combiner): void
     {
         foreach ($videos as $video) {
-            if (isset($combiner[$video->content_id])) {
-                $channelId = $combiner[$video->content_id];
-                $key = $this->models->search(function (Author $author) use ($channelId) {
-                    return $author->channel_id == $channelId;
-                });
-                if ($key !== false && isset($this->models[$key])) {
-                    $author = $this->models[$key];
-                    $video->author()->associate($author);
-                    $video->update();
+            try {
+                if (isset($combiner[$video->content_id])) {
+                    $channelId = $combiner[$video->content_id];
+                    $key = $this->models->search(function (Author $author) use ($channelId) {
+                        return $author->channel_id == $channelId;
+                    });
+                    if ($key !== false && isset($this->models[$key])) {
+                        $author = $this->models[$key];
+                        $video->author()->associate($author);
+                        $video->update();
+                    }
                 }
+            } catch (\Exception $exception) {
+                $this->logger->error(\parseException($exception));
             }
         }
     }
 
-    protected function loadModels()
+    /**
+     * @return void
+     */
+    protected function loadModels(): void
     {
         if (empty($this->models)) {
             $this->models = Author::all();

@@ -46,8 +46,8 @@
                             <div class="card">
                                 <a href="{{ route('compilation', ['compilation' => $compilation]) . '/#scroll' }}">
                                     <img class="card-img-top"
-                                         src="{!! \App\Models\Compilations\Compilation::prettyImage($compilation)['url'] !!}"
-                                         alt="Card image cap">
+                                         src="{{ \App\Models\Compilations\Compilation::prettyImage($compilation) }}"
+                                         alt="{{ $compilation->created_at->toDateString() }}">
                                 </a>
                                 <div class="card-body">
                                     <span>
@@ -60,7 +60,7 @@
                                                 return [
                                                     'url' => $author->channelLink(),
                                                     'title' => $author->name,
-                                                    'img' => $author->thumbnails[\App\Entity\Enums\AvatarSize::DEFAULT]['url'],
+                                                    'img' => $author->prettyImage(),
                                                 ];
                                             })->unique()->splice(0, 8);
                                         @endphp
